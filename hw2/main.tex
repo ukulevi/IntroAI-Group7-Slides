@@ -21,25 +21,19 @@
     \useasboundingbox (0,0) rectangle (16,9);
     \fill[HudBg] (0,0) rectangle (16,9);
 
-    % Right 55% Panel: Wizard's Chess 3D Board with smooth cinematic vignette
+    % Right 55% Panel: Crisp Framed Wizard's Chess 3D Board Showcase
+    \fill[HudBorder!15, rounded corners=8pt] (7.38,1.02) rectangle (15.42,7.88);
     \begin{scope}
-      \clip (7.10,0) rectangle (16,9);
-      \fill[HudBgDeep] (7.10,0) rectangle (16,9);
-      \node[anchor=center, inner sep=0pt] at (11.55,4.72)
-        {\includegraphics[width=9.25cm]{images/hud_cover.jpg}};
-      % Left feather into #0F0C14
-      \fill[HudBg, opacity=0.95] (7.10,0) rectangle (7.38,9);
-      \fill[HudBg, opacity=0.72] (7.38,0) rectangle (7.66,9);
-      \fill[HudBg, opacity=0.42] (7.66,0) rectangle (7.96,9);
-      \fill[HudBg, opacity=0.18] (7.96,0) rectangle (8.30,9);
-      % Top & bottom soft vignette blends into HudBg (low bottom bands preserve white piece bases)
-      \fill[HudBg, opacity=0.95] (7.10,7.75) rectangle (16,9);
-      \fill[HudBg, opacity=0.65] (7.10,7.38) rectangle (16,7.75);
-      \fill[HudBg, opacity=0.30] (7.10,7.00) rectangle (16,7.38);
-      \fill[HudBg, opacity=0.95] (7.10,0) rectangle (16,0.90);
-      \fill[HudBg, opacity=0.55] (7.10,0.90) rectangle (16,1.25);
-      \fill[HudBg, opacity=0.22] (7.10,1.25) rectangle (16,1.58);
+      \clip[rounded corners=7pt] (7.30,1.10) rectangle (15.34,7.96);
+      \fill[black!92] (7.30,1.10) rectangle (15.34,7.96);
+      \node[anchor=center, inner sep=0pt] at (11.32,4.53)
+        {\includegraphics[width=8.60cm]{images/hud_cover.jpg}};
     \end{scope}
+    \draw[HudBorder!55, line width=0.9pt, rounded corners=7pt] (7.30,1.10) rectangle (15.34,7.96);
+    \node[anchor=south west, fill=black!78, draw=HudBorder!45, line width=0.5pt,
+          rounded corners=3pt, inner xsep=6pt, inner ysep=2.5pt,
+          font=\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries, text=white]
+      at (7.52,1.32) {WIZARD'S CHESS $\cdot$ 3D ARENA $\cdot$ AB VS MCTS};
 
     % Cover HUD Corner Brackets
     \draw[HudBorder!70, line width=0.95pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
@@ -137,7 +131,7 @@
     \hudcard{7.85cm}{%
       \centering
       \begin{tikzpicture}[x=0.98cm,y=0.98cm]
-        \tikzstyle{pnode}=[fill=HudTrack, draw=HudLavender!80, line width=0.8pt,
+        \tikzstyle{pnode}=[fill=HudPanelAlt, draw=HudLavender!80, line width=0.8pt,
                            rounded corners=8pt, minimum width=1.60cm, minimum height=0.50cm,
                            font=\fontsize{8}{9}\selectfont\bfseries, text=HudIvory]
         \tikzstyle{lnode}=[fill=HudPanelAlt, draw=HudBorder!75, line width=0.7pt,
@@ -248,7 +242,7 @@
       \vspace{3pt}
       \centering
       \begin{tikzpicture}[x=0.98cm,y=0.98cm]
-        \tikzstyle{tbox}=[fill=HudTrack, draw=HudLavender!80, line width=0.8pt,
+        \tikzstyle{tbox}=[fill=HudPanelAlt, draw=HudLavender!80, line width=0.8pt,
                           rounded corners=7pt, minimum width=1.12cm, minimum height=0.42cm,
                           font=\fontsize{7.8}{9}\selectfont\bfseries, text=HudIvory]
         \node[tbox, draw=HudGold] (max) at (3.25, 2.95) {MAX};
@@ -326,7 +320,7 @@
     \hudcard{6.70cm}{%
       \centering
       \begin{tikzpicture}[x=0.95cm,y=0.95cm]
-        \tikzstyle{mnode}=[fill=HudTrack, draw=HudLavender!75, line width=0.8pt,
+        \tikzstyle{mnode}=[fill=HudPanelAlt, draw=HudLavender!75, line width=0.8pt,
                            rounded corners=7pt, minimum width=1.24cm, minimum height=0.42cm,
                            font=\fontsize{7.6}{9}\selectfont\bfseries, text=HudIvory]
         \tikzstyle{dot}=[fill=HudBorder!65, circle, inner sep=1.4pt]
@@ -512,9 +506,9 @@
       \node[anchor=south east, inner sep=2pt, draw=HudTeal, line width=1.1pt,
             fill=HudBgDeep, rounded corners=4pt] (loupe) at (8.02,0.08)
         {\includegraphics[width=2.68cm]{images/lab_trap_ab_zoom.jpg}};
-      \node[anchor=south east, fill=HudBgDeep, draw=HudTeal, line width=0.6pt,
+      \node[anchor=south east, fill=HudTeal, draw=HudTeal, line width=0.6pt,
             rounded corners=2pt, inner xsep=4pt, inner ysep=1.5pt,
-            font=\ttfamily\fontsize{5.8}{6.8}\selectfont\bfseries, text=HudTeal]
+            font=\ttfamily\fontsize{5.8}{6.8}\selectfont\bfseries, text=white]
         at ($(loupe.north east)+(-0.06,-0.02)$) {ZOOM $\cdot$ AB TRACE};
       % Connector from trace panel to loupe
       \draw[HudTeal, line width=0.9pt, dashed, -{Stealth[length=1.8mm]}]
@@ -540,8 +534,8 @@
 \end{columns}
 \end{frame}
 
-% SLIDE 11 — LIMITATIONS AND NEXT STEPS (Unified Dark Theme + Paired Status Cards!)
-\begin{frame}{LIMITATIONS AND NEXT STEPS}
+% SLIDE 11 — LIMITATIONS AND FUTURE WORKS (Unified Light Theme + Paired Status Cards!)
+\begin{frame}{LIMITATIONS AND FUTURE WORKS}
 \hudslidetag[HudGold]{HONEST ASSESSMENT}
 \framesubtitle{The conclusion is specific to these agents, datasets, and small time budgets}
 \vspace{0.08cm}

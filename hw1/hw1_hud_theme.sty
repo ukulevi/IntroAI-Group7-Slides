@@ -16,22 +16,22 @@
 \RequirePackage{anyfontsize}
 
 % ----------------------------------------------------------------------
-% 1. Cartographic Urban Navigation Dark HUD Color Palette
+% 1. Cartographic Urban Navigation Light HUD Color Palette
 % ----------------------------------------------------------------------
-\definecolor{NavBg}{HTML}{0B1018}
-\definecolor{NavBgDeep}{HTML}{070B12}
-\definecolor{NavPanel}{HTML}{131B29}
-\definecolor{NavPanelAlt}{HTML}{192336}
-\definecolor{NavTrack}{HTML}{1F2B42}
-\definecolor{NavBorder}{HTML}{3B6CB7}
-\definecolor{NavCyan}{HTML}{38BDF8}     % Safe A* (primary accent)
-\definecolor{NavTeal}{HTML}{34D399}     % Verified / 0 violations / Origin A
-\definecolor{NavAmber}{HTML}{F5B74F}    % Traffic heuristic / caution / speed
-\definecolor{NavCrimson}{HTML}{F06A78}  % Violations / counterexample / Dest B
-\definecolor{NavIvory}{HTML}{F1F5F9}    % Primary text
-\definecolor{NavMuted}{HTML}{94A3B8}    % Secondary text
+\definecolor{NavBg}{HTML}{F4F7FB}       % Soft cool alabaster canvas
+\definecolor{NavBgDeep}{HTML}{E6EEF8}   % Soft slate-blue tint
+\definecolor{NavPanel}{HTML}{FFFFFF}    % Pure white elevated cards
+\definecolor{NavPanelAlt}{HTML}{EEF4FC} % Subtle ice-blue highlight card/strip
+\definecolor{NavTrack}{HTML}{DCE6F2}    % Crisp bar track & inactive chip fill
+\definecolor{NavBorder}{HTML}{2563EB}   % Royal blue HUD brackets & outlines
+\definecolor{NavCyan}{HTML}{0369A1}     % Deep cerulean (Safe A* — high contrast)
+\definecolor{NavTeal}{HTML}{047857}     % Deep emerald (Verified / Origin A / checks)
+\definecolor{NavAmber}{HTML}{B45309}    % Deep amber-ochre (Traffic / eyebrow / caution)
+\definecolor{NavCrimson}{HTML}{BE123C}  % Deep crimson (Violations / Dest B)
+\definecolor{NavIvory}{HTML}{0F172A}    % Deep slate-black primary ink
+\definecolor{NavMuted}{HTML}{475569}    % Crisp readable muted slate
 \definecolor{NavStone}{HTML}{64748B}    % Zero / Dijkstra baseline bar
-\arrayrulecolor{NavBorder!50}
+\arrayrulecolor{NavBorder!30}
 
 % ----------------------------------------------------------------------
 % 2. Typography (XeLaTeX fontspec with resilient fallbacks & TeX ligatures)
@@ -126,14 +126,14 @@
 
     % Optional coordinate grid for problem/algorithm slides
     \ifnavgrid
-      \draw[NavBorder!15!NavBg, line width=0.3pt, step=0.8cm] (0.64,0.88) grid (15.36,7.92);
+      \draw[NavBorder!12!NavBg, line width=0.35pt, step=0.8cm] (0.64,0.88) grid (15.36,7.92);
     \fi
 
     % HUD Corner Brackets (inset 0.28cm, arm 0.44cm)
-    \draw[NavBorder!65, line width=0.9pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
-    \draw[NavBorder!65, line width=0.9pt] (15.28,8.72) -- (15.72,8.72) -- (15.72,8.28);
-    \draw[NavBorder!65, line width=0.9pt] (0.28,0.72) -- (0.28,0.28) -- (0.72,0.28);
-    \draw[NavBorder!65, line width=0.9pt] (15.28,0.28) -- (15.72,0.28) -- (15.72,0.72);
+    \draw[NavBorder!55, line width=0.9pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
+    \draw[NavBorder!55, line width=0.9pt] (15.28,8.72) -- (15.72,8.72) -- (15.72,8.28);
+    \draw[NavBorder!55, line width=0.9pt] (0.28,0.72) -- (0.28,0.28) -- (0.72,0.28);
+    \draw[NavBorder!55, line width=0.9pt] (15.28,0.28) -- (15.72,0.28) -- (15.72,0.72);
     \fill[NavCyan!80] (0.28,8.72) circle (0.035) (15.72,8.72) circle (0.035)
                        (0.28,0.28) circle (0.035) (15.72,0.28) circle (0.035);
 
@@ -142,7 +142,7 @@
       at (0.85, 8.54) {\nav@eyebrow};
 
     % Compact HCMUT crest pill left of chips
-    \node[anchor=east, fill=NavPanel, draw=NavBorder!40, rounded corners=3pt,
+    \node[anchor=east, fill=NavPanel, draw=NavBorder!30, rounded corners=3pt,
           inner xsep=4pt, inner ysep=1.2pt] (bkbadge) at (13.68, 8.54) {%
       \includegraphics[height=0.31cm]{images/BK.png}%
       \hspace{3pt}{\ttfamily\fontsize{6.0}{7}\selectfont\color{NavMuted}HCMUT}%
@@ -152,7 +152,7 @@
     \foreach \i in {1,2,3,4} {%
       \pgfmathsetmacro{\chipx}{13.88 + (\i - 1)*0.33}%
       \ifnum\i=\nav@section
-        \fill[NavBorder!45, rounded corners=2pt] (\chipx-0.03, 8.41) rectangle (\chipx+0.25, 8.69);
+        \fill[NavBorder!25, rounded corners=2pt] (\chipx-0.03, 8.41) rectangle (\chipx+0.25, 8.69);
         \fill[NavCyan, rounded corners=1.5pt] (\chipx, 8.44) rectangle (\chipx+0.22, 8.66);
       \else
         \fill[NavTrack, rounded corners=1.5pt] (\chipx, 8.44) rectangle (\chipx+0.22, 8.66);
@@ -225,7 +225,7 @@
 % Status tag badge
 \newcommand{\navtag}[2][NavTeal]{%
   \tikz[baseline=(n.base)]{%
-    \node[fill=NavTrack, draw=#1!65, line width=0.6pt, rounded corners=2.5pt,
+    \node[fill=NavPanelAlt, draw=#1!55, line width=0.6pt, rounded corners=2.5pt,
           inner xsep=5pt, inner ysep=2.2pt, text=#1,
           font=\ttfamily\fontsize{6.6}{7.5}\selectfont\bfseries] (n) {#2};%
   }%
@@ -235,48 +235,46 @@
 \newcommand{\navdivider}[1]{%
   \begin{tikzpicture}[x=1cm,y=1cm]
     \pgfmathsetmacro{\halfw}{#1/2}
-    \draw[NavBorder!50, line width=0.6pt] (0,0) -- (\halfw-0.25,0);
-    \draw[NavBorder!50, line width=0.6pt] (\halfw+0.25,0) -- (#1,0);
+    \draw[NavBorder!40, line width=0.6pt] (0,0) -- (\halfw-0.25,0);
+    \draw[NavBorder!40, line width=0.6pt] (\halfw+0.25,0) -- (#1,0);
     \fill[NavCyan] (\halfw,0.10) -- (\halfw+0.10,0) -- (\halfw,-0.10) -- (\halfw-0.10,0) -- cycle;
     \fill[NavAmber] (\halfw,0) circle (0.035);
   \end{tikzpicture}%
 }
 
-% Frosted glassmorphism card
+% Elevated light card with HUD corner brackets
 \newcommand{\navcard}[3][]{%
   \begin{tikzpicture}
-    \node[fill=NavPanel, draw=NavBorder!40, line width=0.65pt, rounded corners=5pt,
+    \node[fill=NavPanel, draw=NavBorder!28, line width=0.65pt, rounded corners=5pt,
           inner sep=8pt, text width=#2, align=left, text=NavIvory, #1] (c) {#3};
-    \draw[NavCyan!80, line width=0.95pt, rounded corners=5pt]
+    \draw[NavCyan!85, line width=0.95pt, rounded corners=5pt]
       ($(c.north west)+(0,-0.28)$) |- ($(c.north west)+(0.28,0)$);
-    \draw[NavCyan!80, line width=0.95pt, rounded corners=5pt]
+    \draw[NavCyan!85, line width=0.95pt, rounded corners=5pt]
       ($(c.south east)+(0,0.28)$) |- ($(c.south east)+(-0.28,0)$);
   \end{tikzpicture}%
 }
 
-% Frosted card with crisp colored left accent bar
+% Elevated light card with crisp colored left accent bar
 \newcommand{\navcardaccent}[4][8pt]{%
   \begin{tikzpicture}
-    \node[fill=NavPanel, draw=NavBorder!35, line width=0.6pt, rounded corners=5pt,
+    \node[fill=NavPanel, draw=NavBorder!28, line width=0.6pt, rounded corners=5pt,
           inner sep=#1, text width=#3, align=left, text=NavIvory] (c) {#4};
     \draw[#2, line width=2.2pt, line cap=round]
       ($(c.north west)+(0.03,-0.16)$) -- ($(c.south west)+(0.03,0.16)$);
   \end{tikzpicture}%
 }
 
-% Oversized hero metric with simulated soft glow (fast single-pass XeLaTeX)
+% Oversized hero metric with crisp light-mode shadow (single-pass XeLaTeX)
 \newcommand{\navhero}[3][NavCyan]{%
   \begin{tikzpicture}[baseline=(fg.base)]
-    \node[inner sep=0pt, text=NavBorder!45, opacity=0.35,
-          font=\navdisplay\fontsize{#2}{#2}\selectfont] at (0.04,-0.03) {#3};
-    \node[inner sep=0pt, text=#1!55, opacity=0.35,
-          font=\navdisplay\fontsize{#2}{#2}\selectfont] at (-0.03,0.03) {#3};
+    \node[inner sep=0pt, text=NavBorder!22, opacity=0.30,
+          font=\navdisplay\fontsize{#2}{#2}\selectfont] at (0.03,-0.03) {#3};
     \node[inner sep=0pt, text=#1,
           font=\navdisplay\fontsize{#2}{#2}\selectfont] (fg) at (0,0) {#3};
   \end{tikzpicture}%
 }
 
-% Dark-mode horizontal bar row: {label}{labelW_cm}{barW_cm}{fraction}{valueText}{color}
+% Light-mode horizontal bar row: {label}{labelW_cm}{barW_cm}{fraction}{valueText}{color}
 \newcommand{\navbar}[6]{%
   \begin{tikzpicture}[x=1cm,y=1cm]
     \node[anchor=west, inner sep=0pt, text width=#2cm, align=left,
@@ -285,7 +283,6 @@
     \pgfmathsetmacro{\fillw}{max(0.08, #3 * #4)}
     \fill[NavTrack, rounded corners=2.2pt] (\bx,-0.11) rectangle (\bx+#3,0.11);
     \fill[#6, rounded corners=2.2pt] (\bx,-0.11) rectangle (\bx+\fillw,0.11);
-    \fill[#6!50!white, rounded corners=1pt] (\bx+\fillw-0.06,-0.11) rectangle (\bx+\fillw,0.11);
     \node[anchor=west, inner sep=0pt, font=\ttfamily\fontsize{8}{9}\selectfont\bfseries, text=#6]
       at (\bx+#3+0.18, 0) {#5};
   \end{tikzpicture}%

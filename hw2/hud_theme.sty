@@ -16,22 +16,22 @@
 \RequirePackage{anyfontsize}
 
 % ----------------------------------------------------------------------
-% 1. Unified Dark HUD Color Palette
+% 1. Unified Light Editorial HUD Color Palette
 % ----------------------------------------------------------------------
-\definecolor{HudBg}{HTML}{0F0C14}
-\definecolor{HudBgDeep}{HTML}{0A080E}
-\definecolor{HudPanel}{HTML}{1A1623}
-\definecolor{HudPanelAlt}{HTML}{211B2E}
-\definecolor{HudTrack}{HTML}{262035}
-\definecolor{HudBorder}{HTML}{7B55B7}
-\definecolor{HudLavender}{HTML}{D2BCFF}
-\definecolor{HudGold}{HTML}{E3C77F}
-\definecolor{HudTeal}{HTML}{5EEAD4}
-\definecolor{HudCrimson}{HTML}{E06C75}
-\definecolor{HudIvory}{HTML}{F2EDE5}
-\definecolor{HudMuted}{HTML}{A9A3B0}
-\definecolor{HudStone}{HTML}{6B6378}
-\arrayrulecolor{HudBorder!50}
+\definecolor{HudBg}{HTML}{FAF9FC}       % Soft warm alabaster-white canvas
+\definecolor{HudBgDeep}{HTML}{EFEBF7}   % Soft lavender-tinted backdrop
+\definecolor{HudPanel}{HTML}{FFFFFF}    % Pure white elevated cards
+\definecolor{HudPanelAlt}{HTML}{F3EFFB} % Soft lavender highlight surface
+\definecolor{HudTrack}{HTML}{E4DFF0}    % Crisp bar track & inactive chips/pips
+\definecolor{HudBorder}{HTML}{6D28D9}   % Rich royal violet HUD frame
+\definecolor{HudLavender}{HTML}{5B21B6} % Deep amethyst (Alpha-Beta primary)
+\definecolor{HudGold}{HTML}{B45309}     % Deep burnished amber-gold (MCTS / eyebrow)
+\definecolor{HudTeal}{HTML}{0F766E}     % Deep teal (Hybrid / checks / arrows)
+\definecolor{HudCrimson}{HTML}{BE123C}  % Deep crimson (pruned X / blunder)
+\definecolor{HudIvory}{HTML}{181424}    % Deep obsidian-plum ink
+\definecolor{HudMuted}{HTML}{524B63}    % Readable plum-slate muted text
+\definecolor{HudStone}{HTML}{716B82}    % Baseline bar slate
+\arrayrulecolor{HudBorder!30}
 
 % ----------------------------------------------------------------------
 % 2. Typography (XeLaTeX fontspec with resilient fallbacks & TeX ligatures)
@@ -126,14 +126,14 @@
 
     % Optional coordinate grid for algorithm slides (02, 04, 05)
     \ifhudgrid
-      \draw[HudBorder!14!HudBg, line width=0.3pt, step=0.8cm] (0.64,0.88) grid (15.36,7.92);
+      \draw[HudBorder!11!HudBg, line width=0.35pt, step=0.8cm] (0.64,0.88) grid (15.36,7.92);
     \fi
 
     % HUD Corner Brackets (inset 0.28cm, arm 0.44cm)
-    \draw[HudBorder!65, line width=0.9pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
-    \draw[HudBorder!65, line width=0.9pt] (15.28,8.72) -- (15.72,8.72) -- (15.72,8.28);
-    \draw[HudBorder!65, line width=0.9pt] (0.28,0.72) -- (0.28,0.28) -- (0.72,0.28);
-    \draw[HudBorder!65, line width=0.9pt] (15.28,0.28) -- (15.72,0.28) -- (15.72,0.72);
+    \draw[HudBorder!55, line width=0.9pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
+    \draw[HudBorder!55, line width=0.9pt] (15.28,8.72) -- (15.72,8.72) -- (15.72,8.28);
+    \draw[HudBorder!55, line width=0.9pt] (0.28,0.72) -- (0.28,0.28) -- (0.72,0.28);
+    \draw[HudBorder!55, line width=0.9pt] (15.28,0.28) -- (15.72,0.28) -- (15.72,0.72);
     \fill[HudLavender!80] (0.28,8.72) circle (0.035) (15.72,8.72) circle (0.035)
                            (0.28,0.28) circle (0.035) (15.72,0.28) circle (0.035);
 
@@ -142,7 +142,7 @@
       at (0.85, 8.54) {\hud@eyebrow};
 
     % Compact HCMUT crest pill left of chips
-    \node[anchor=east, fill=HudPanel, draw=HudBorder!40, rounded corners=3pt,
+    \node[anchor=east, fill=HudPanel, draw=HudBorder!30, rounded corners=3pt,
           inner xsep=4pt, inner ysep=1.2pt] (bkbadge) at (13.68, 8.54) {%
       \includegraphics[height=0.31cm]{images/BK.png}%
       \hspace{3pt}{\ttfamily\fontsize{6.0}{7}\selectfont\color{HudMuted}HCMUT}%
@@ -152,7 +152,7 @@
     \foreach \i in {1,2,3,4} {%
       \pgfmathsetmacro{\chipx}{13.88 + (\i - 1)*0.33}%
       \ifnum\i=\hud@section
-        \fill[HudBorder!40, rounded corners=2pt] (\chipx-0.03, 8.41) rectangle (\chipx+0.25, 8.69);
+        \fill[HudBorder!25, rounded corners=2pt] (\chipx-0.03, 8.41) rectangle (\chipx+0.25, 8.69);
         \fill[HudLavender, rounded corners=1.5pt] (\chipx, 8.44) rectangle (\chipx+0.22, 8.66);
       \else
         \fill[HudTrack, rounded corners=1.5pt] (\chipx, 8.44) rectangle (\chipx+0.22, 8.66);
@@ -225,7 +225,7 @@
 % Status tag badge
 \newcommand{\hudtag}[2][HudTeal]{%
   \tikz[baseline=(n.base)]{%
-    \node[fill=HudTrack, draw=#1!65, line width=0.6pt, rounded corners=2.5pt,
+    \node[fill=HudPanelAlt, draw=#1!55, line width=0.6pt, rounded corners=2.5pt,
           inner xsep=5pt, inner ysep=2.2pt, text=#1,
           font=\ttfamily\fontsize{6.6}{7.5}\selectfont\bfseries] (n) {#2};%
   }%
@@ -235,48 +235,46 @@
 \newcommand{\huddivider}[1]{%
   \begin{tikzpicture}[x=1cm,y=1cm]
     \pgfmathsetmacro{\halfw}{#1/2}
-    \draw[HudBorder!50, line width=0.6pt] (0,0) -- (\halfw-0.25,0);
-    \draw[HudBorder!50, line width=0.6pt] (\halfw+0.25,0) -- (#1,0);
+    \draw[HudBorder!40, line width=0.6pt] (0,0) -- (\halfw-0.25,0);
+    \draw[HudBorder!40, line width=0.6pt] (\halfw+0.25,0) -- (#1,0);
     \fill[HudLavender] (\halfw,0.10) -- (\halfw+0.10,0) -- (\halfw,-0.10) -- (\halfw-0.10,0) -- cycle;
     \fill[HudGold] (\halfw,0) circle (0.035);
   \end{tikzpicture}%
 }
 
-% Frosted glassmorphism card
+% Elevated light card with HUD corner brackets
 \newcommand{\hudcard}[3][]{%
   \begin{tikzpicture}
-    \node[fill=HudPanel, draw=HudBorder!40, line width=0.65pt, rounded corners=5pt,
+    \node[fill=HudPanel, draw=HudBorder!28, line width=0.65pt, rounded corners=5pt,
           inner sep=8pt, text width=#2, align=left, text=HudIvory, #1] (c) {#3};
-    \draw[HudLavender!80, line width=0.95pt, rounded corners=5pt]
+    \draw[HudLavender!85, line width=0.95pt, rounded corners=5pt]
       ($(c.north west)+(0,-0.28)$) |- ($(c.north west)+(0.28,0)$);
-    \draw[HudLavender!80, line width=0.95pt, rounded corners=5pt]
+    \draw[HudLavender!85, line width=0.95pt, rounded corners=5pt]
       ($(c.south east)+(0,0.28)$) |- ($(c.south east)+(-0.28,0)$);
   \end{tikzpicture}%
 }
 
-% Frosted card with crisp colored left accent bar
+% Elevated light card with crisp colored left accent bar
 \newcommand{\hudcardaccent}[4][8pt]{%
   \begin{tikzpicture}
-    \node[fill=HudPanel, draw=HudBorder!35, line width=0.6pt, rounded corners=5pt,
+    \node[fill=HudPanel, draw=HudBorder!28, line width=0.6pt, rounded corners=5pt,
           inner sep=#1, text width=#3, align=left, text=HudIvory] (c) {#4};
     \draw[#2, line width=2.2pt, line cap=round]
       ($(c.north west)+(0.03,-0.16)$) -- ($(c.south west)+(0.03,0.16)$);
   \end{tikzpicture}%
 }
 
-% Oversized hero metric with simulated soft glow (fast single-pass XeLaTeX)
+% Oversized hero metric with crisp light-mode shadow (fast single-pass XeLaTeX)
 \newcommand{\hudhero}[3][HudLavender]{%
   \begin{tikzpicture}[baseline=(fg.base)]
-    \node[inner sep=0pt, text=HudBorder!45, opacity=0.35,
-          font=\huddisplay\fontsize{#2}{#2}\selectfont] at (0.04,-0.03) {#3};
-    \node[inner sep=0pt, text=#1!55, opacity=0.35,
-          font=\huddisplay\fontsize{#2}{#2}\selectfont] at (-0.03,0.03) {#3};
+    \node[inner sep=0pt, text=HudBorder!20, opacity=0.28,
+          font=\huddisplay\fontsize{#2}{#2}\selectfont] at (0.03,-0.03) {#3};
     \node[inner sep=0pt, text=#1,
           font=\huddisplay\fontsize{#2}{#2}\selectfont] (fg) at (0,0) {#3};
   \end{tikzpicture}%
 }
 
-% Dark-mode horizontal bar row: {label}{labelW_cm}{barW_cm}{fraction}{valueText}{color}
+% Light-mode horizontal bar row: {label}{labelW_cm}{barW_cm}{fraction}{valueText}{color}
 \newcommand{\hudbar}[6]{%
   \begin{tikzpicture}[x=1cm,y=1cm]
     \node[anchor=west, inner sep=0pt, text width=#2cm, align=left,
@@ -285,7 +283,6 @@
     \pgfmathsetmacro{\fillw}{max(0.08, #3 * #4)}
     \fill[HudTrack, rounded corners=2.2pt] (\bx,-0.11) rectangle (\bx+#3,0.11);
     \fill[#6, rounded corners=2.2pt] (\bx,-0.11) rectangle (\bx+\fillw,0.11);
-    \fill[#6!50!white, rounded corners=1pt] (\bx+\fillw-0.06,-0.11) rectangle (\bx+\fillw,0.11);
     \node[anchor=west, inner sep=0pt, font=\ttfamily\fontsize{8}{9}\selectfont\bfseries, text=#6]
       at (\bx+#3+0.18, 0) {#5};
   \end{tikzpicture}%
@@ -319,18 +316,18 @@
   \end{tikzpicture}%
 }
 
-% Slide 11 paired limitation -> next step card row
+% Slide 11 paired limitation -> future work card row
 \newcommand{\hudlimpair}[3]{% {y}{lim}{next}
-  \node[fill=HudPanel, draw=HudBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
+  \node[fill=HudPanel, draw=HudBorder!28, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
         text width=6.05cm, minimum height=0.80cm, anchor=west, text=HudIvory] (L) at (0,#1) {%
     {\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries\color{HudGold}LIMITATION}\\[1pt]
     {\fontsize{8.1}{10}\selectfont\color{HudIvory}#2}%
   };
   \draw[HudGold, line width=2pt, line cap=round] ($(L.north west)+(0.03,-0.12)$) -- ($(L.south west)+(0.03,0.12)$);
   \draw[HudTeal, line width=1pt, -{Stealth[length=2mm]}] (6.68,#1) -- (7.48,#1);
-  \node[fill=HudPanel, draw=HudBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
+  \node[fill=HudPanel, draw=HudBorder!28, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
         text width=6.15cm, minimum height=0.80cm, anchor=west, text=HudIvory] (R) at (7.58,#1) {%
-    {\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries\color{HudTeal}NEXT STEP}\\[1pt]
+    {\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries\color{HudTeal}FUTURE WORK}\\[1pt]
     {\fontsize{8.1}{10}\selectfont\color{HudIvory}#3}%
   };
   \draw[HudTeal, line width=2pt, line cap=round] ($(R.north west)+(0.03,-0.12)$) -- ($(R.south west)+(0.03,0.12)$);

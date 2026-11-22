@@ -21,25 +21,19 @@
     \useasboundingbox (0,0) rectangle (16,9);
     \fill[NavBg] (0,0) rectangle (16,9);
 
-    % Right 55% Panel: Dark HCMC Road Map & Safe A* Route with smooth vignette
+    % Right 55% Panel: Crisp Framed Dark HCMC Road Map Showcase
+    \fill[NavBorder!15, rounded corners=8pt] (7.38,1.02) rectangle (15.42,7.88);
     \begin{scope}
-      \clip (7.10,0) rectangle (16,9);
-      \fill[NavBgDeep] (7.10,0) rectangle (16,9);
-      \node[anchor=center, inner sep=0pt] at (11.55,4.55)
-        {\includegraphics[width=9.20cm]{images/hcmc_cover_map.jpg}};
-      % Left feather into #0B1018
-      \fill[NavBg, opacity=0.95] (7.10,0) rectangle (7.38,9);
-      \fill[NavBg, opacity=0.72] (7.38,0) rectangle (7.66,9);
-      \fill[NavBg, opacity=0.42] (7.66,0) rectangle (7.96,9);
-      \fill[NavBg, opacity=0.18] (7.96,0) rectangle (8.30,9);
-      % Top & bottom soft vignette blends into NavBg
-      \fill[NavBg, opacity=0.95] (7.10,7.65) rectangle (16,9);
-      \fill[NavBg, opacity=0.65] (7.10,7.30) rectangle (16,7.65);
-      \fill[NavBg, opacity=0.28] (7.10,6.95) rectangle (16,7.30);
-      \fill[NavBg, opacity=0.95] (7.10,0) rectangle (16,1.00);
-      \fill[NavBg, opacity=0.58] (7.10,1.00) rectangle (16,1.35);
-      \fill[NavBg, opacity=0.22] (7.10,1.35) rectangle (16,1.68);
+      \clip[rounded corners=7pt] (7.30,1.10) rectangle (15.34,7.96);
+      \fill[black!92] (7.30,1.10) rectangle (15.34,7.96);
+      \node[anchor=center, inner sep=0pt] at (11.32,4.53)
+        {\includegraphics[width=8.60cm]{images/hcmc_cover_map.jpg}};
     \end{scope}
+    \draw[NavBorder!55, line width=0.9pt, rounded corners=7pt] (7.30,1.10) rectangle (15.34,7.96);
+    \node[anchor=south west, fill=black!78, draw=NavBorder!45, line width=0.5pt,
+          rounded corners=3pt, inner xsep=6pt, inner ysep=2.5pt,
+          font=\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries, text=white]
+      at (7.52,1.32) {HCMC ROAD GRAPH $\cdot$ 44,178 NODES $\cdot$ SAFE A*};
 
     % Cover HUD Corner Brackets
     \draw[NavBorder!70, line width=0.95pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
@@ -137,14 +131,14 @@
     \navcard{7.85cm}{%
       \centering
       \begin{tikzpicture}[x=1cm,y=1cm]
-        \tikzstyle{gnode}=[fill=NavTrack, draw=NavCyan!80, line width=0.8pt,
+        \tikzstyle{gnode}=[fill=NavPanelAlt, draw=NavCyan!80, line width=0.8pt,
                            circle, minimum size=0.60cm,
                            font=\fontsize{8}{9}\selectfont\bfseries, text=NavIvory]
-        \node[gnode, draw=NavTeal, fill=NavTeal!20!NavTrack, text=NavTeal] (A) at (0.7, 1.85) {A};
+        \node[gnode, draw=NavTeal, fill=NavTeal!14!white, text=NavTeal] (A) at (0.7, 1.85) {A};
         \node[gnode] (u) at (2.8, 2.55) {$u$};
         \node[gnode] (w) at (2.8, 0.95) {$w$};
         \node[gnode] (v) at (5.3, 2.15) {$v$};
-        \node[gnode, draw=NavCrimson, fill=NavCrimson!20!NavTrack, text=NavCrimson] (B) at (7.1, 1.45) {B};
+        \node[gnode, draw=NavCrimson, fill=NavCrimson!14!white, text=NavCrimson] (B) at (7.1, 1.45) {B};
 
         % Directed edges + parallel edge (u, v, k=0) vs (u, v, k=1)
         \draw[NavCyan, line width=1.1pt, -{Stealth[length=2mm]}] (A) -- node[above left, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {14s} (u);
@@ -243,7 +237,7 @@
       \vspace{4pt}
       \centering
       \begin{tikzpicture}[x=0.95cm,y=0.95cm]
-        \tikzstyle{snode}=[fill=NavTrack, draw=NavCyan!75, line width=0.8pt,
+        \tikzstyle{snode}=[fill=NavPanelAlt, draw=NavCyan!75, line width=0.8pt,
                            rounded corners=7pt, minimum width=1.15cm, minimum height=0.44cm,
                            font=\fontsize{7.6}{9}\selectfont\bfseries, text=NavIvory]
         \node[snode, draw=NavTeal] (S) at (0.7, 2.15) {Start};
@@ -359,7 +353,7 @@
       \vspace{2pt}
       \centering
       \begin{tikzpicture}[x=1cm,y=1cm]
-        \tikzstyle{cnode}=[fill=NavTrack, draw=NavBorder!80, line width=0.8pt,
+        \tikzstyle{cnode}=[fill=NavPanelAlt, draw=NavBorder!80, line width=0.8pt,
                            circle, minimum size=0.62cm,
                            font=\fontsize{8.5}{9}\selectfont\bfseries, text=NavIvory]
         \node[cnode, draw=NavAmber] (u) at (1.0, 1.35) {$u$};
@@ -502,11 +496,11 @@
         {\includegraphics[width=8.05cm]{images/qa_1.png}};
       % Zoomed Safe metrics loupe placed cleanly in open bottom-center map area (clear of A & B)
       \node[anchor=south, inner sep=2pt, draw=NavCyan, line width=1.1pt,
-            fill=NavBgDeep, rounded corners=4pt] (loupe) at (5.05,0.12)
+            fill=white, rounded corners=4pt] (loupe) at (5.05,0.12)
         {\includegraphics[width=2.75cm]{images/qa_safe_zoom.png}};
-      \node[anchor=south east, fill=NavBgDeep, draw=NavCyan, line width=0.6pt,
+      \node[anchor=south east, fill=NavCyan, draw=NavCyan, line width=0.6pt,
             rounded corners=2pt, inner xsep=4pt, inner ysep=1.5pt,
-            font=\ttfamily\fontsize{5.6}{6.6}\selectfont\bfseries, text=NavCyan]
+            font=\ttfamily\fontsize{5.6}{6.6}\selectfont\bfseries, text=white]
         at ($(loupe.north east)+(-0.04,-0.02)$) {ZOOM $\cdot$ SAFE METRICS};
       \draw[NavCyan, line width=0.9pt, dashed, -{Stealth[length=1.8mm]}]
         (2.15,0.85) -- (loupe.west);
