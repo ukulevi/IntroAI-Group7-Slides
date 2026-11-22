@@ -1,0 +1,309 @@
+% PathFinding HCMC Dark Navigation HUD Theme for LaTeX Beamer (XeLaTeX)
+% Sibling theme to HW2 Dark HUD — Built for Group 7 · CC01 · HCMUT (CO3061 Intro AI)
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hw1_hud_theme}[2026/11/22 PathFinding HCMC Dark HUD Beamer Theme]
+
+\RequirePackage{fontspec}
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+\usetikzlibrary{positioning,calc,arrows.meta}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{colortbl}
+\RequirePackage{anyfontsize}
+
+% ----------------------------------------------------------------------
+% 1. Cartographic Urban Navigation Dark HUD Color Palette
+% ----------------------------------------------------------------------
+\definecolor{NavBg}{HTML}{0B1018}
+\definecolor{NavBgDeep}{HTML}{070B12}
+\definecolor{NavPanel}{HTML}{131B29}
+\definecolor{NavPanelAlt}{HTML}{192336}
+\definecolor{NavTrack}{HTML}{1F2B42}
+\definecolor{NavBorder}{HTML}{3B6CB7}
+\definecolor{NavCyan}{HTML}{38BDF8}     % Safe A* (primary accent)
+\definecolor{NavTeal}{HTML}{34D399}     % Verified / 0 violations / Origin A
+\definecolor{NavAmber}{HTML}{F5B74F}    % Traffic heuristic / caution / speed
+\definecolor{NavCrimson}{HTML}{F06A78}  % Violations / counterexample / Dest B
+\definecolor{NavIvory}{HTML}{F1F5F9}    % Primary text
+\definecolor{NavMuted}{HTML}{94A3B8}    % Secondary text
+\definecolor{NavStone}{HTML}{64748B}    % Zero / Dijkstra baseline bar
+\arrayrulecolor{NavBorder!50}
+
+% ----------------------------------------------------------------------
+% 2. Typography (XeLaTeX fontspec with resilient fallbacks & TeX ligatures)
+% ----------------------------------------------------------------------
+\IfFontExistsTF{Cinzel}{
+  \newfontfamily\navdisplay{Cinzel}[Scale=MatchUppercase,Ligatures=TeX]
+}{
+  \newfontfamily\navdisplay{TeX Gyre Pagella}[Ligatures=TeX]
+}
+
+\IfFontExistsTF{Inter}{
+  \setsansfont{Inter}[Scale=MatchLowercase,Ligatures=TeX]
+  \setmainfont{Inter}[Scale=MatchLowercase,Ligatures=TeX]
+}{
+  \setsansfont{TeX Gyre Heros}[Ligatures=TeX]
+  \setmainfont{TeX Gyre Heros}[Ligatures=TeX]
+}
+
+\IfFontExistsTF{JetBrains Mono}{
+  \setmonofont{JetBrains Mono}[Scale=0.84]
+}{
+  \setmonofont{Fira Mono}[Scale=0.84]
+}
+
+% ----------------------------------------------------------------------
+% 3. Beamer Base Geometry & Chrome
+% ----------------------------------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{}
+\setbeamersize{text margin left=0.85cm, text margin right=0.85cm}
+
+\setbeamercolor{background canvas}{bg=NavBg}
+\setbeamercolor{normal text}{fg=NavIvory,bg=NavBg}
+\setbeamercolor{structure}{fg=NavCyan}
+\setbeamercolor{frametitle}{fg=NavIvory}
+\setbeamercolor{framesubtitle}{fg=NavMuted}
+\setbeamercolor{itemize item}{fg=NavCyan}
+\setbeamercolor{itemize subitem}{fg=NavAmber}
+\setbeamertemplate{itemize item}{\raisebox{0.18ex}{\tikz\fill[NavCyan] (0,0) -- (0.08,0.08) -- (0.16,0) -- (0.08,-0.08) -- cycle;}}
+\setbeamertemplate{itemize subitem}{\textcolor{NavAmber}{\scriptsize$\triangleright$}}
+
+% ----------------------------------------------------------------------
+% 4. Section State, Grid Toggle, Appendix Counter & Status Tag
+% ----------------------------------------------------------------------
+\def\nav@section{1}
+\def\nav@eyebrow{01 / PROBLEM \& DESIGN}
+\newif\ifnavgrid
+\navgridfalse
+\newif\ifnavappendix
+\navappendixfalse
+\def\nav@appoffset{11}
+
+\newcommand{\navsetsection}[2]{%
+  \gdef\nav@section{#1}%
+  \gdef\nav@eyebrow{#2}%
+}
+\newcommand{\navgridon}{\global\navgridtrue}
+\newcommand{\navgridoff}{\global\navgridfalse}
+\newcommand{\navstartappendix}{%
+  \appendix
+  \global\navappendixtrue
+  \xdef\nav@appoffset{\the\value{framenumber}}%
+  \navgridoff
+  \navsetsection{0}{APPENDIX / Q\&A BACKUP}%
+}
+
+\def\nav@slidetag{}
+\def\nav@tagcolor{NavTeal}
+\newcommand{\navslidetag}[2][NavTeal]{%
+  \gdef\nav@tagcolor{#1}%
+  \gdef\nav@slidetag{#2}%
+}
+
+% Zero-padded frame index helper (idempotent across passes)
+\newcommand{\nav@framenum}{%
+  \ifnavappendix
+    Q\the\numexpr\value{framenumber}-\nav@appoffset\relax
+  \else
+    \ifnum\value{framenumber}<10 0\fi\insertframenumber
+  \fi
+}
+
+% ----------------------------------------------------------------------
+% 5. Background Canvas Template (Unified Dark Navigation HUD Chrome)
+% ----------------------------------------------------------------------
+\setbeamertemplate{background canvas}{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \useasboundingbox (0,0) rectangle (16,9);
+    % Base canvas
+    \fill[NavBg] (0,0) rectangle (16,9);
+
+    % Optional coordinate grid for problem/algorithm slides
+    \ifnavgrid
+      \draw[NavBorder!15!NavBg, line width=0.3pt, step=0.8cm] (0.64,0.88) grid (15.36,7.92);
+    \fi
+
+    % HUD Corner Brackets (inset 0.28cm, arm 0.44cm)
+    \draw[NavBorder!65, line width=0.9pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
+    \draw[NavBorder!65, line width=0.9pt] (15.28,8.72) -- (15.72,8.72) -- (15.72,8.28);
+    \draw[NavBorder!65, line width=0.9pt] (0.28,0.72) -- (0.28,0.28) -- (0.72,0.28);
+    \draw[NavBorder!65, line width=0.9pt] (15.28,0.28) -- (15.72,0.28) -- (15.72,0.72);
+    \fill[NavCyan!80] (0.28,8.72) circle (0.035) (15.72,8.72) circle (0.035)
+                       (0.28,0.28) circle (0.035) (15.72,0.28) circle (0.035);
+
+    % Top Chrome: Eyebrow (left) & HCMUT crest + 4-chip indicator (right)
+    \node[anchor=west, inner sep=0pt, font=\ttfamily\fontsize{7.2}{8}\selectfont, text=NavAmber]
+      at (0.85, 8.54) {\nav@eyebrow};
+
+    % Compact HCMUT crest pill left of chips
+    \node[anchor=east, fill=NavPanel, draw=NavBorder!40, rounded corners=3pt,
+          inner xsep=4pt, inner ysep=1.2pt] (bkbadge) at (13.68, 8.54) {%
+      \includegraphics[height=0.31cm]{images/BK.png}%
+      \hspace{3pt}{\ttfamily\fontsize{6.0}{7}\selectfont\color{NavMuted}HCMUT}%
+    };
+
+    % 4-chip section progress indicator
+    \foreach \i in {1,2,3,4} {%
+      \pgfmathsetmacro{\chipx}{13.88 + (\i - 1)*0.33}%
+      \ifnum\i=\nav@section
+        \fill[NavBorder!45, rounded corners=2pt] (\chipx-0.03, 8.41) rectangle (\chipx+0.25, 8.69);
+        \fill[NavCyan, rounded corners=1.5pt] (\chipx, 8.44) rectangle (\chipx+0.22, 8.66);
+      \else
+        \fill[NavTrack, rounded corners=1.5pt] (\chipx, 8.44) rectangle (\chipx+0.22, 8.66);
+      \fi
+    }
+
+    % Bottom Chrome: Divider with centered amber diamond + Footer + Slide Index
+    \draw[NavBorder!45, line width=0.5pt] (0.85, 0.68) -- (15.15, 0.68);
+    \fill[NavAmber] (8.00, 0.74) -- (8.07, 0.68) -- (8.00, 0.62) -- (7.93, 0.68) -- cycle;
+
+    \node[anchor=west, inner sep=0pt, font=\ttfamily\fontsize{6.5}{7.5}\selectfont, text=NavMuted]
+      at (0.85, 0.42) {PATHFINDING HCMC \ / \ INTRO AI (CO3061) \ $\cdot$ \ GROUP 7 \ CC01};
+
+    \node[anchor=east, inner sep=0pt, font=\ttfamily\bfseries\fontsize{8}{9}\selectfont, text=NavCyan]
+      at (15.15, 0.42) {\nav@framenum};
+  \end{tikzpicture}%
+}
+
+% ----------------------------------------------------------------------
+% 6. Frametitle Template
+% ----------------------------------------------------------------------
+\setbeamertemplate{frametitle}{%
+  \vspace*{0.62cm}%
+  \noindent\begin{minipage}[t]{\textwidth}%
+    \ifx\nav@slidetag\@empty
+      {\raggedright\navdisplay\fontsize{15.2}{18}\selectfont\color{NavIvory}\insertframetitle\par}%
+    \else
+      \begin{minipage}[t]{0.72\textwidth}%
+        {\raggedright\navdisplay\fontsize{15.2}{18}\selectfont\color{NavIvory}\insertframetitle\par}%
+      \end{minipage}%
+      \hfill%
+      \begin{minipage}[t]{0.27\textwidth}%
+        \raggedleft
+        \raisebox{-0.55ex}{\navtag[\nav@tagcolor]{\nav@slidetag}}%
+      \end{minipage}%
+    \fi
+    \ifx\insertframesubtitle\@empty\else
+      \par\vspace{1.5pt}%
+      {\raggedright\fontsize{8.2}{10}\selectfont\color{NavMuted}\insertframesubtitle\par}%
+    \fi
+  \end{minipage}%
+  \gdef\nav@slidetag{}%
+  \vspace*{-0.14cm}%
+}
+
+% ----------------------------------------------------------------------
+% 7. Reusable Vector Icons & HUD Components
+% ----------------------------------------------------------------------
+\newcommand{\navcheck}{%
+  \raisebox{-0.1ex}{\tikz[x=1mm,y=1mm]{%
+    \draw[NavTeal, line width=1.1pt, line cap=round, line join=round] (0,1.2) -- (1.0,0.2) -- (2.6,2.2);%
+  }}%
+}
+\newcommand{\navcross}{%
+  \raisebox{-0.1ex}{\tikz[x=1mm,y=1mm]{%
+    \draw[NavCrimson, line width=1.1pt, line cap=round] (0,0) -- (2.2,2.2) (0,2.2) -- (2.2,0);%
+  }}%
+}
+\newcommand{\navdiamond}[1][NavAmber]{%
+  \raisebox{0.15ex}{\tikz[x=1mm,y=1mm]{%
+    \fill[#1] (1.2,0) -- (2.4,1.2) -- (1.2,2.4) -- (0,1.2) -- cycle;%
+  }}%
+}
+\newcommand{\navarrow}[1][NavTeal]{%
+  \raisebox{0.25ex}{\tikz[x=1mm,y=1mm]{%
+    \draw[#1, line width=1pt, -{Stealth[length=1.8mm,width=1.4mm]}] (0,0) -- (5.5,0);%
+  }}%
+}
+
+% Status tag badge
+\newcommand{\navtag}[2][NavTeal]{%
+  \tikz[baseline=(n.base)]{%
+    \node[fill=NavTrack, draw=#1!65, line width=0.6pt, rounded corners=2.5pt,
+          inner xsep=5pt, inner ysep=2.2pt, text=#1,
+          font=\ttfamily\fontsize{6.6}{7.5}\selectfont\bfseries] (n) {#2};%
+  }%
+}
+
+% Diamond divider
+\newcommand{\navdivider}[1]{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \pgfmathsetmacro{\halfw}{#1/2}
+    \draw[NavBorder!50, line width=0.6pt] (0,0) -- (\halfw-0.25,0);
+    \draw[NavBorder!50, line width=0.6pt] (\halfw+0.25,0) -- (#1,0);
+    \fill[NavCyan] (\halfw,0.10) -- (\halfw+0.10,0) -- (\halfw,-0.10) -- (\halfw-0.10,0) -- cycle;
+    \fill[NavAmber] (\halfw,0) circle (0.035);
+  \end{tikzpicture}%
+}
+
+% Frosted glassmorphism card
+\newcommand{\navcard}[3][]{%
+  \begin{tikzpicture}
+    \node[fill=NavPanel, draw=NavBorder!40, line width=0.65pt, rounded corners=5pt,
+          inner sep=8pt, text width=#2, align=left, text=NavIvory, #1] (c) {#3};
+    \draw[NavCyan!80, line width=0.95pt, rounded corners=5pt]
+      ($(c.north west)+(0,-0.28)$) |- ($(c.north west)+(0.28,0)$);
+    \draw[NavCyan!80, line width=0.95pt, rounded corners=5pt]
+      ($(c.south east)+(0,0.28)$) |- ($(c.south east)+(-0.28,0)$);
+  \end{tikzpicture}%
+}
+
+% Frosted card with crisp colored left accent bar
+\newcommand{\navcardaccent}[4][8pt]{%
+  \begin{tikzpicture}
+    \node[fill=NavPanel, draw=NavBorder!35, line width=0.6pt, rounded corners=5pt,
+          inner sep=#1, text width=#3, align=left, text=NavIvory] (c) {#4};
+    \draw[#2, line width=2.2pt, line cap=round]
+      ($(c.north west)+(0.03,-0.16)$) -- ($(c.south west)+(0.03,0.16)$);
+  \end{tikzpicture}%
+}
+
+% Oversized hero metric with simulated soft glow (fast single-pass XeLaTeX)
+\newcommand{\navhero}[3][NavCyan]{%
+  \begin{tikzpicture}[baseline=(fg.base)]
+    \node[inner sep=0pt, text=NavBorder!45, opacity=0.35,
+          font=\navdisplay\fontsize{#2}{#2}\selectfont] at (0.04,-0.03) {#3};
+    \node[inner sep=0pt, text=#1!55, opacity=0.35,
+          font=\navdisplay\fontsize{#2}{#2}\selectfont] at (-0.03,0.03) {#3};
+    \node[inner sep=0pt, text=#1,
+          font=\navdisplay\fontsize{#2}{#2}\selectfont] (fg) at (0,0) {#3};
+  \end{tikzpicture}%
+}
+
+% Dark-mode horizontal bar row: {label}{labelW_cm}{barW_cm}{fraction}{valueText}{color}
+\newcommand{\navbar}[6]{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \node[anchor=west, inner sep=0pt, text width=#2cm, align=left,
+          font=\fontsize{8.3}{9.5}\selectfont\bfseries, text=NavIvory] at (0,0) {#1};
+    \pgfmathsetmacro{\bx}{#2 + 0.15}
+    \pgfmathsetmacro{\fillw}{max(0.08, #3 * #4)}
+    \fill[NavTrack, rounded corners=2.2pt] (\bx,-0.11) rectangle (\bx+#3,0.11);
+    \fill[#6, rounded corners=2.2pt] (\bx,-0.11) rectangle (\bx+\fillw,0.11);
+    \fill[#6!50!white, rounded corners=1pt] (\bx+\fillw-0.06,-0.11) rectangle (\bx+\fillw,0.11);
+    \node[anchor=west, inner sep=0pt, font=\ttfamily\fontsize{8}{9}\selectfont\bfseries, text=#6]
+      at (\bx+#3+0.18, 0) {#5};
+  \end{tikzpicture}%
+}
+
+% Slide 10 paired limitation -> future work card row
+\newcommand{\navlimpair}[3]{% {y}{lim}{future}
+  \node[fill=NavPanel, draw=NavBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
+        text width=6.05cm, minimum height=0.80cm, anchor=west, text=NavIvory] (L) at (0,#1) {%
+    {\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries\color{NavAmber}LIMITATION}\\[1pt]
+    {\fontsize{8.1}{10}\selectfont\color{NavIvory}#2}%
+  };
+  \draw[NavAmber, line width=2pt, line cap=round] ($(L.north west)+(0.03,-0.12)$) -- ($(L.south west)+(0.03,0.12)$);
+  \draw[NavTeal, line width=1pt, -{Stealth[length=2mm]}] (6.68,#1) -- (7.48,#1);
+  \node[fill=NavPanel, draw=NavBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
+        text width=6.15cm, minimum height=0.80cm, anchor=west, text=NavIvory] (R) at (7.58,#1) {%
+    {\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries\color{NavTeal}FUTURE WORK}\\[1pt]
+    {\fontsize{8.1}{10}\selectfont\color{NavIvory}#3}%
+  };
+  \draw[NavTeal, line width=2pt, line cap=round] ($(R.north west)+(0.03,-0.12)$) -- ($(R.south west)+(0.03,0.12)$);
+}

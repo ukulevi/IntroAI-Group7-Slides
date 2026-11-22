@@ -1,0 +1,780 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usepackage{hw1_hud_theme}
+
+\hypersetup{
+  pdftitle={PathFinding HCMC — Traffic-Aware A* Routing | HW1},
+  pdfauthor={Group 7 · CC01 · HCMUT},
+  pdfsubject={Introduction to Artificial Intelligence (CO3061)},
+  colorlinks=true,
+  linkcolor=NavCyan,
+  urlcolor=NavTeal
+}
+
+\begin{document}
+
+% ======================================================================
+% SLIDE 01 — COVER
+% ======================================================================
+\begingroup
+\setbeamertemplate{background canvas}{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \useasboundingbox (0,0) rectangle (16,9);
+    \fill[NavBg] (0,0) rectangle (16,9);
+
+    % Right 55% Panel: Dark HCMC Road Map & Safe A* Route with smooth vignette
+    \begin{scope}
+      \clip (7.10,0) rectangle (16,9);
+      \fill[NavBgDeep] (7.10,0) rectangle (16,9);
+      \node[anchor=center, inner sep=0pt] at (11.55,4.55)
+        {\includegraphics[width=9.20cm]{images/hcmc_cover_map.jpg}};
+      % Left feather into #0B1018
+      \fill[NavBg, opacity=0.95] (7.10,0) rectangle (7.38,9);
+      \fill[NavBg, opacity=0.72] (7.38,0) rectangle (7.66,9);
+      \fill[NavBg, opacity=0.42] (7.66,0) rectangle (7.96,9);
+      \fill[NavBg, opacity=0.18] (7.96,0) rectangle (8.30,9);
+      % Top & bottom soft vignette blends into NavBg
+      \fill[NavBg, opacity=0.95] (7.10,7.65) rectangle (16,9);
+      \fill[NavBg, opacity=0.65] (7.10,7.30) rectangle (16,7.65);
+      \fill[NavBg, opacity=0.28] (7.10,6.95) rectangle (16,7.30);
+      \fill[NavBg, opacity=0.95] (7.10,0) rectangle (16,1.00);
+      \fill[NavBg, opacity=0.58] (7.10,1.00) rectangle (16,1.35);
+      \fill[NavBg, opacity=0.22] (7.10,1.35) rectangle (16,1.68);
+    \end{scope}
+
+    % Cover HUD Corner Brackets
+    \draw[NavBorder!70, line width=0.95pt] (0.28,8.28) -- (0.28,8.72) -- (0.72,8.72);
+    \draw[NavBorder!70, line width=0.95pt] (15.28,8.72) -- (15.72,8.72) -- (15.72,8.28);
+    \draw[NavBorder!70, line width=0.95pt] (0.28,0.72) -- (0.28,0.28) -- (0.72,0.28);
+    \draw[NavBorder!70, line width=0.95pt] (15.28,0.28) -- (15.72,0.28) -- (15.72,0.72);
+    \fill[NavCyan] (0.28,8.72) circle (0.04) (15.72,8.72) circle (0.04)
+                   (0.28,0.28) circle (0.04) (15.72,0.28) circle (0.04);
+
+    % Top-right 4-chip indicator (chip 1 active)
+    \node[anchor=east, fill=NavPanel, opacity=0.90, draw=NavBorder!45,
+          rounded corners=3pt, inner xsep=6pt, inner ysep=3pt] at (15.15,8.44) {%
+      \tikz[x=1cm,y=1cm]{
+        \fill[NavCyan, rounded corners=1.2pt] (0,0) rectangle (0.20,0.20);
+        \fill[NavTrack, rounded corners=1.2pt] (0.30,0) rectangle (0.50,0.20);
+        \fill[NavTrack, rounded corners=1.2pt] (0.60,0) rectangle (0.80,0.20);
+        \fill[NavTrack, rounded corners=1.2pt] (0.90,0) rectangle (1.10,0.20);
+      }%
+    };
+
+    % Top-left HCMUT lockup
+    \node[anchor=west, inner sep=0pt] (bk) at (0.85,8.05) {\includegraphics[height=0.68cm]{images/BK.png}};
+    \node[anchor=west, inner sep=0pt, align=left] at (1.72,8.05) {%
+      {\fontsize{7.5}{9}\selectfont\bfseries\color{NavIvory}HCMUT $\cdot$ VNU-HCM}\\[2pt]
+      {\fontsize{6.8}{8.5}\selectfont\color{NavMuted}Faculty of Computer Science \& Engineering}%
+    };
+
+    % Eyebrow pill
+    \node[anchor=west, inner sep=0pt] at (0.85,6.88) {\navtag[NavCyan]{GROUP 7 $\cdot$ CC01 $\cdot$ CO3061 $\cdot$ HW1}};
+
+    % Main Cyan/Amber Cinzel Title + Subtitle
+    \node[anchor=west, inner sep=0pt, align=left] at (0.82,5.42) {%
+      {\navdisplay\fontsize{24}{28}\selectfont\color{NavIvory}PATHFINDING}\\
+      {\navdisplay\fontsize{28}{31}\selectfont\color{NavCyan}HCMC}\\[4pt]
+      {\navdisplay\fontsize{10.5}{13}\selectfont\color{NavAmber}TRAFFIC-AWARE A* ROUTING}%
+    };
+
+    % Diamond divider
+    \node[anchor=west, inner sep=0pt] at (0.85,3.82) {\navdivider{4.8}};
+
+    % Cyan tagline
+    \node[anchor=west, inner sep=0pt, align=left] at (0.85,3.12) {%
+      {\fontsize{11.5}{15}\selectfont\color{NavCyan}Fastest paths.}\\
+      {\fontsize{11.5}{15}\selectfont\color{NavCyan}Verified bounds.}%
+    };
+
+    % Metadata block (Inter for clean Vietnamese rendering)
+    \node[anchor=west, inner sep=0pt, align=left] at (0.85,1.62) {%
+      {\fontsize{8.2}{11.5}\selectfont\color{NavMuted}Course: \color{NavIvory}Introduction to Artificial Intelligence (CO3061)}\\
+      {\fontsize{8.2}{11.5}\selectfont\color{NavMuted}Advisor: \color{NavIvory}Dr. Nguyễn Quốc Minh}%
+    };
+
+    % Cover bottom footer
+    \draw[NavBorder!45, line width=0.5pt] (0.85,0.68) -- (6.80,0.68);
+    \node[anchor=west, inner sep=0pt, font=\ttfamily\fontsize{6.5}{7.5}\selectfont, text=NavMuted]
+      at (0.85,0.42) {PATHFINDING HCMC \ / \ INTRO AI \ $\cdot$ \ HCMUT};
+    \node[anchor=east, inner sep=0pt, font=\ttfamily\bfseries\fontsize{8}{9}\selectfont, text=NavCyan]
+      at (15.15,0.42) {01};
+  \end{tikzpicture}%
+}
+\begin{frame}[plain]
+\mbox{}
+\end{frame}
+\endgroup
+
+% ======================================================================
+% SECTION 01 — PROBLEM & DESIGN (Slides 02–03)
+% ======================================================================
+\navsetsection{1}{01 / PROBLEM \& DESIGN}
+\navgridon
+
+% SLIDE 02 — URBAN ROUTING AS GRAPH SEARCH
+\begin{frame}{URBAN ROUTING AS GRAPH SEARCH}
+\framesubtitle{Minimum travel time on Ho Chi Minh City's directed road network (shortest distance $\neq$ fastest path)}
+\vspace{0.06cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{5.3cm}
+    \navhero[NavCyan]{36}{44,178}\par
+    \vspace{2pt}
+    {\fontsize{10}{12}\selectfont\bfseries\color{NavAmber}ROAD GRAPH NODES}\par
+    \vspace{4pt}
+    {\fontsize{8.8}{11.8}\selectfont\color{NavIvory}Travel speed varies across streets and time of day.}\par
+    \vspace{5pt}
+    \navtag[NavTeal]{103,810 DIRECTED EDGES}\par
+    \vspace{6pt}
+    \navcardaccent[5.5pt]{NavBorder}{4.7cm}{%
+      {\fontsize{7.7}{10.5}\selectfont\color{NavMuted}%
+        $\bullet$ \textbf{\color{NavIvory}150 POIs}, \textbf{\color{NavCyan}15 categories} (147 nodes)\\
+        $\bullet$ Study box: $\pm 10\text{ km}$ around $(10.7769, 106.7009)$\\
+        $\bullet$ One-way streets + parallel edges (\texttt{MultiDiGraph})
+      }%
+    }
+  \end{column}
+  \begin{column}{8.6cm}
+    \navcard{7.85cm}{%
+      \centering
+      \begin{tikzpicture}[x=1cm,y=1cm]
+        \tikzstyle{gnode}=[fill=NavTrack, draw=NavCyan!80, line width=0.8pt,
+                           circle, minimum size=0.60cm,
+                           font=\fontsize{8}{9}\selectfont\bfseries, text=NavIvory]
+        \node[gnode, draw=NavTeal, fill=NavTeal!20!NavTrack, text=NavTeal] (A) at (0.7, 1.85) {A};
+        \node[gnode] (u) at (2.8, 2.55) {$u$};
+        \node[gnode] (w) at (2.8, 0.95) {$w$};
+        \node[gnode] (v) at (5.3, 2.15) {$v$};
+        \node[gnode, draw=NavCrimson, fill=NavCrimson!20!NavTrack, text=NavCrimson] (B) at (7.1, 1.45) {B};
+
+        % Directed edges + parallel edge (u, v, k=0) vs (u, v, k=1)
+        \draw[NavCyan, line width=1.1pt, -{Stealth[length=2mm]}] (A) -- node[above left, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {14s} (u);
+        \draw[NavBorder!80, line width=0.85pt, -{Stealth[length=2mm]}] (A) -- node[below left, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {22s} (w);
+
+        % Parallel edges u -> v
+        \draw[NavAmber, line width=0.95pt, bend left=26, -{Stealth[length=2mm]}]
+          (u) to node[above, font=\ttfamily\fontsize{6.6}{8}\selectfont, text=NavAmber] {k=0: 42s (slow)} (v);
+        \draw[NavCyan, line width=1.25pt, bend right=18, -{Stealth[length=2mm]}]
+          (u) to node[below, yshift=-1pt, font=\ttfamily\fontsize{6.6}{8}\selectfont\bfseries, text=NavCyan] {k=1: 19s (fast)} (v);
+
+        \draw[NavBorder!80, line width=0.85pt, -{Stealth[length=2mm]}] (w) -- node[below right, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {28s} (v);
+        \draw[NavCyan, line width=1.1pt, -{Stealth[length=2mm]}] (v) -- node[above right, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {12s} (B);
+
+        % Formula strip
+        \node[fill=NavPanelAlt, draw=NavBorder!45, rounded corners=3pt, inner xsep=8pt, inner ysep=3.5pt,
+              font=\ttfamily\fontsize{7.5}{9}\selectfont, text=NavAmber]
+          at (3.9, 0.15) {c(e) = 3.6 * L\_e / v\_e \ (seconds), \ \ v\_e > 0};
+      \end{tikzpicture}
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% SLIDE 03 — SYSTEM & TRAFFIC-COST PIPELINE
+\navgridoff
+\begin{frame}{SYSTEM \& TRAFFIC-COST PIPELINE}
+\navslidetag[NavCyan]{DESIGN $\cdot$ HISTORICAL SNAPSHOT}
+\framesubtitle{Frozen weekday 08:00--08:29 profile ensures fair, reproducible comparison across all heuristics}
+\vspace{0.10cm}
+
+\noindent\begin{tikzpicture}[x=1cm,y=1cm]
+  \useasboundingbox (0,0) rectangle (14.3,1.95);
+  \node[fill=NavPanel, draw=NavBorder!45, rounded corners=5pt, inner sep=7.5pt,
+        text width=3.65cm, minimum height=1.66cm, anchor=west, text=NavIvory] (c1) at (0,0.98) {%
+    {\ttfamily\fontsize{7}{8}\selectfont\bfseries\color{NavAmber}01 $\cdot$ DATA \& TRAFFIC}\\[4pt]
+    {\fontsize{10.5}{13}\selectfont\bfseries\color{NavIvory}OSMnx +}\\
+    {\fontsize{10.5}{13}\selectfont\bfseries\color{NavIvory}Kaggle HCMC}\\[3pt]
+    {\fontsize{7.4}{9.5}\selectfont\color{NavMuted}Median speed (5--100 km/h) + 5-tier fallback}%
+  };
+  \draw[NavCyan, line width=1.1pt, -{Stealth[length=2.2mm]}] (4.20,0.98) -- (4.90,0.98);
+
+  \node[fill=NavPanelAlt, draw=NavCyan!65, line width=0.9pt, rounded corners=5pt, inner sep=7.5pt,
+        text width=3.85cm, minimum height=1.66cm, anchor=west, text=NavIvory] (c2) at (4.98,0.98) {%
+    {\ttfamily\fontsize{7}{8}\selectfont\bfseries\color{NavCyan}02 $\cdot$ VALIDATED A* ENGINE}\\[4pt]
+    {\fontsize{10.5}{13}\selectfont\bfseries\color{NavIvory}Safe / Traffic}\\
+    {\fontsize{10.5}{13}\selectfont\bfseries\color{NavIvory}/ Zero (Dijkstra)}\\[3pt]
+    {\fontsize{7.4}{9.5}\selectfont\color{NavMuted}Frozen graph + load-time edge-bound check}%
+  };
+  \draw[NavCyan, line width=1.1pt, -{Stealth[length=2.2mm]}] (9.38,0.98) -- (10.08,0.98);
+
+  \node[fill=NavPanel, draw=NavBorder!45, rounded corners=5pt, inner sep=7.5pt,
+        text width=3.58cm, minimum height=1.64cm, anchor=west, text=NavIvory] (c3) at (10.12,0.98) {%
+    {\ttfamily\fontsize{7}{8}\selectfont\bfseries\color{NavTeal}03 $\cdot$ UI \& AUDIT}\\[4pt]
+    {\fontsize{10.5}{13}\selectfont\bfseries\color{NavIvory}Map UI +}\\
+    {\fontsize{10.5}{13}\selectfont\bfseries\color{NavIvory}NetworkX Audit}\\[3pt]
+    {\fontsize{7.4}{9.5}\selectfont\color{NavMuted}GeoJSON routes + reverse-Dijkstra check}%
+  };
+\end{tikzpicture}\par
+
+\vspace{0.10cm}
+\noindent\navdivider{14.3}\par
+\vspace{0.10cm}
+
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{6.95cm}
+    \navcardaccent[7.5pt]{NavAmber}{6.22cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavAmber}HISTORICAL MODEL (NOT LIVE FEED)}\\[3pt]
+      {\fontsize{8.3}{11.5}\selectfont\color{NavIvory}Kaggle speeds are grouped by weekday/weekend \& time bucket ($\ge 3$ obs). Density and flow are analytical estimates, not vehicle counts; non-routable edges are excluded.}%
+    }
+  \end{column}
+  \begin{column}{6.95cm}
+    \navcardaccent[7.5pt]{NavCyan}{6.22cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavCyan}KEYED MULTIGRAPH \& ACCESS LINES}\\[3pt]
+      {\fontsize{8.3}{11.5}\selectfont\color{NavIvory}Parent pointers store \texttt{(u, edge\_key)} to reconstruct exact parallel road segments. POI-to-road access legs are displayed separately from driving cost.}%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% ======================================================================
+% SECTION 02 — ALGORITHMS & PROOFS (Slides 04–06)
+% ======================================================================
+\navsetsection{2}{02 / ALGORITHMS \& PROOFS}
+\navgridon
+
+% SLIDE 04 — CUSTOM A* ON DIRECTED MULTIGRAPHS
+\begin{frame}{CUSTOM A* ON MULTIGRAPHS}
+\navslidetag[NavCyan]{CORE SEARCH}
+\framesubtitle{Priority search $f(n) = g(n) + h(n)$ with keyed parallel-edge reconstruction and node reopening}
+\vspace{0.08cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{7.6cm}
+    \navcard{6.90cm}{%
+      {\fontsize{8.2}{10}\selectfont\bfseries\color{NavCyan}Frontier priority, parallel keys, and reopening}\par
+      \vspace{4pt}
+      \centering
+      \begin{tikzpicture}[x=0.95cm,y=0.95cm]
+        \tikzstyle{snode}=[fill=NavTrack, draw=NavCyan!75, line width=0.8pt,
+                           rounded corners=7pt, minimum width=1.15cm, minimum height=0.44cm,
+                           font=\fontsize{7.6}{9}\selectfont\bfseries, text=NavIvory]
+        \node[snode, draw=NavTeal] (S) at (0.7, 2.15) {Start};
+        \node[snode] (U) at (2.8, 2.85) {Node $u$};
+        \node[snode] (W) at (2.8, 1.05) {Node $w$};
+        \node[snode, draw=NavAmber] (V) at (5.0, 2.15) {Node $v$};
+        \node[snode, draw=NavCrimson] (G) at (6.7, 2.15) {Goal};
+
+        \draw[NavCyan, line width=1pt, -{Stealth[length=1.8mm]}] (S) -- (U);
+        \draw[NavBorder!70, line width=0.8pt, -{Stealth[length=1.8mm]}] (S) -- (W);
+
+        \draw[NavStone, dashed, line width=0.8pt, bend left=24, -{Stealth[length=1.8mm]}]
+          (U) to node[above, font=\ttfamily\fontsize{6.4}{7.5}\selectfont, text=NavMuted] {k=0: 18s} (V);
+        \draw[NavCyan, line width=1.2pt, bend right=16, -{Stealth[length=1.8mm]}]
+          (U) to node[below, font=\ttfamily\fontsize{6.4}{7.5}\selectfont\bfseries, text=NavCyan] {k=1: 11s} (V);
+
+        % Reopen arc from W to V
+        \draw[NavAmber, dashed, line width=0.9pt, -{Stealth[length=1.8mm]}]
+          (W) -- node[below right, yshift=-2pt, font=\fontsize{6.6}{7.8}\selectfont, text=NavAmber] {cheaper $g$ reopens $v$} (V);
+        \draw[NavCyan, line width=1pt, -{Stealth[length=1.8mm]}] (V) -- (G);
+
+        \node[fill=NavPanelAlt, inner sep=2.5pt, rounded corners=2pt,
+              font=\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries, text=NavCyan]
+          at (3.6, 0.20) {min-heap key: f(n) = g(n) + h(n)};
+      \end{tikzpicture}
+    }
+  \end{column}
+  \begin{column}{6.2cm}
+    \navcardaccent[6.5pt]{NavCyan}{5.50cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavCyan}IMPLEMENTATION DETAILS}\\[3pt]
+      {\fontsize{8.0}{11.2}\selectfont\color{NavIvory}%
+        \navcheck\ \ Exact \texttt{g(n)} + keyed \texttt{(parent, key)} tracking\\
+        \navcheck\ \ Node reopening on cheaper path\\
+        \navcheck\ \ Explicit \texttt{no-route} if disconnected
+      }%
+    }\par
+    \vspace{0.12cm}
+    \navcardaccent[6.5pt]{NavAmber}{5.50cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavAmber}THREE EVALUATED HEURISTICS}\\[4pt]
+      {\fontsize{8.0}{11.5}\selectfont\color{NavIvory}%
+        \navtag[NavCyan]{Safe}\ \ Global $V_{\mathrm{upper}}$ + Haversine (proven)\\[2.5pt]
+        \navtag[NavAmber]{Traffic}\ \ Local congestion scaling (exp.)\\[2.5pt]
+        \navtag[NavStone]{Zero}\ \ $h(n) = 0$ (Dijkstra baseline)%
+      }%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% SLIDE 05 — SAFE HEURISTIC: PROOF & EDGE CHECK
+\begin{frame}{SAFE HEURISTIC: PROOF \& EDGE CHECK}
+\navslidetag[NavTeal]{ADMISSIBLE \& CONSISTENT}
+\framesubtitle{Snapshot-dependent speed bound plus exhaustive per-edge verification guarantee optimality}
+\vspace{0.10cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{7.8cm}
+    \navcard[inner sep=8pt]{7.10cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavCyan}SNAPSHOT BOUND \& SUFFICIENT CONDITION}\\[4pt]
+      {\fontsize{8.4}{11.5}\selectfont\color{NavIvory}%
+        \[
+          V_{\mathrm{upper}}(S) = 1.001 \max_{e \in E} v_e(S) = \mathbf{74.074\;\mathrm{km/h}}
+        \]
+        \[
+          h_{\mathrm{safe}}(n,t;S) = \frac{3.6\,d_{\mathrm{hav}}(n,t)}{V_{\mathrm{upper}}(S)}
+        \]
+        \textbf{Checked edge condition} ($\forall$ traversable $(u,v)$):
+        \[
+          c(u,v) \ge \frac{3.6\,d_{\mathrm{hav}}(u,v)}{V_{\mathrm{upper}}(S)}
+        \]
+        By great-circle triangle inequality:
+        \[
+          h_{\mathrm{safe}}(u,t) \le \frac{3.6\,d_{\mathrm{hav}}(u,v)}{V_{\mathrm{upper}}(S)} + h_{\mathrm{safe}}(v,t) \le c(u,v) + h_{\mathrm{safe}}(v,t)
+        \]
+        \centering\textbf{\color{NavTeal}Consistent $\Longrightarrow$ Admissible $\Longrightarrow$ Optimal A*}%
+      }%
+    }
+  \end{column}
+  \begin{column}{6.0cm}
+    \navcardaccent[7.5pt]{NavTeal}{5.30cm}{%
+      \navhero[NavTeal]{22}{0 / 103,810}\par
+      \vspace{2pt}
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavTeal}EDGE-BOUND VIOLATIONS}\\[4pt]
+      {\fontsize{8.1}{11.2}\selectfont\color{NavIvory}%
+        $\bullet$ Minimum edge margin: \textbf{\color{NavTeal}0.064892\,s}\\
+        $\bullet$ Graph stays frozen after validation%
+      }%
+    }\par
+    \vspace{0.18cm}
+    \navcardaccent[7.5pt]{NavCyan}{5.30cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavCyan}WHY CHECK EVERY EDGE?}\\[4pt]
+      {\fontsize{8.1}{11.4}\selectfont\color{NavIvory}%
+        OSM geometry or cost rounding can violate a theoretical speed bound. Both CLI and API validate stored costs at load time and reject incompatible graphs.%
+      }%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% SLIDE 06 — TRAFFIC HEURISTIC & COUNTEREXAMPLE
+\begin{frame}{TRAFFIC HEURISTIC \& COUNTEREXAMPLE}
+\navslidetag[NavAmber]{EXPERIMENTAL VARIANT}
+\framesubtitle{Local congestion scaling adapts to nearby roads but breaks admissibility and consistency}
+\vspace{0.10cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{7.6cm}
+    \navcard[inner sep=8pt]{6.90cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavAmber}CONGESTION-SENSITIVE FORMULA}\\[2pt]
+      {\fontsize{8.4}{11}\selectfont\color{NavIvory}%
+        \[
+          h_{\mathrm{traffic}}(n,t;S) = h_{\mathrm{safe}}(n,t;S)\,[1 + \beta\,q_S(n)], \quad \beta = 0.25
+        \]
+      }%
+      \vspace{2pt}
+      \centering
+      \begin{tikzpicture}[x=1cm,y=1cm]
+        \tikzstyle{cnode}=[fill=NavTrack, draw=NavBorder!80, line width=0.8pt,
+                           circle, minimum size=0.62cm,
+                           font=\fontsize{8.5}{9}\selectfont\bfseries, text=NavIvory]
+        \node[cnode, draw=NavAmber] (u) at (1.0, 1.35) {$u$};
+        \node[cnode, draw=NavTeal] (t) at (5.6, 1.35) {$t$};
+        \draw[NavCyan, line width=1.1pt, -{Stealth[length=2mm]}]
+          (u) -- node[above, font=\ttfamily\fontsize{7.5}{8.5}\selectfont\bfseries, text=NavIvory] {c(u,t) = 10.00\,s} (t);
+
+        \node[fill=NavPanelAlt, draw=NavBorder!45, rounded corners=3pt, inner sep=4pt, align=left,
+              font=\ttfamily\fontsize{7.0}{9}\selectfont, text=NavMuted] at (3.3, 0.35) {%
+          h\_safe(u,t) = 9.99\,s, \ q\_S(u) = 0.50\\
+          \color{NavCrimson}\bfseries h\_traffic(u,t) = 11.24\,s > 10.00\,s \ \navcross
+        };
+      \end{tikzpicture}
+    }
+  \end{column}
+  \begin{column}{6.2cm}
+    \navcardaccent[8pt]{NavCrimson}{5.50cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavCrimson}THEORETICAL BREAKDOWN}\\[4pt]
+      {\fontsize{8.2}{11.5}\selectfont\color{NavIvory}%
+        A multiplier $> 1$ can overestimate exact cost $h^*(u,t)$ and exceed $c(u,t)+h(t,t)$.\\[4pt]
+        Node reopening does \textbf{not} restore general optimality when A* stops upon popping the goal.%
+      }%
+    }\par
+    \vspace{0.18cm}
+    \navcardaccent[8pt]{NavAmber}{5.50cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavAmber}CONTROLLED ROLE}\\[4pt]
+      {\fontsize{8.2}{11.5}\selectfont\color{NavIvory}%
+        Reproduced by a synthetic regression test in \texttt{tests/}. Evaluated for comparison only; \textbf{\color{NavCyan}Safe A*} grounds all optimality claims.%
+      }%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% ======================================================================
+% SECTION 03 — EXPERIMENTAL RESULTS (Slides 07–09)
+% ======================================================================
+\navsetsection{3}{03 / EXPERIMENTAL RESULTS}
+\navgridoff
+
+% SLIDE 07 — SAFE A* CUTS EXPANSIONS BY 46.1%
+\begin{frame}{SAFE A* CUTS EXPANSIONS BY 46.1\%}
+\navslidetag[NavCyan]{SEED 42 $\cdot$ 20 PAIRS $\cdot$ 12 GOALS}
+\framesubtitle{All three variants matched independent NetworkX Dijkstra costs on 20/20 sampled POI pairs}
+\vspace{0.10cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{4.85cm}
+    \vspace{0.06cm}
+    \navhero[NavCyan]{38}{46.1\%}\par
+    \vspace{3pt}
+    {\fontsize{9.6}{12}\selectfont\bfseries\color{NavAmber}FEWER EXPANDED NODES}\par
+    \vspace{3pt}
+    {\fontsize{8.5}{11}\selectfont\color{NavIvory}Safe A* vs Zero baseline}\par
+    \vspace{7pt}
+    \navtag[NavTeal]{20/20 DIJKSTRA MATCHES}\par
+    \vspace{8pt}
+    \navcardaccent[6.5pt]{NavBorder}{4.3cm}{%
+      {\fontsize{7.8}{11}\selectfont\color{NavMuted}%
+        $\bullet$ \textbf{\color{NavIvory}Profile:} Weekday 08:00--08:29\\
+        $\bullet$ \textbf{\color{NavIvory}Audit:} 12 goals $\times$ 44,022 reachable nodes (rev. Dijkstra)\\
+        $\bullet$ \textbf{\color{NavIvory}Tolerance:} $10^{-6}\text{ s}$%
+      }%
+    }
+  \end{column}
+  \begin{column}{8.95cm}
+    \navcard[inner sep=8pt]{8.20cm}{%
+      \navbar{Zero (Dijkstra)}{2.55}{3.75}{1.000}{192,099}{NavStone}\\[6pt]
+      \navbar{Traffic A*}{2.55}{3.75}{0.546}{104,846}{NavAmber}\\[6pt]
+      \navbar{Safe A*}{2.55}{3.75}{0.539}{103,510}{NavCyan}\\[5pt]
+      {\ttfamily\fontsize{6.3}{8}\selectfont\color{NavMuted}TOTAL EXPANDED NODES (20 PAIRS) $\cdot$ SAFE SAVES 33.2\% to 60.1\% PER PAIR}%
+    }\par
+    \vspace{0.14cm}
+    \navcard[inner sep=6pt]{8.20cm}{%
+      \setlength{\tabcolsep}{4pt}%
+      \renewcommand{\arraystretch}{1.08}%
+      \fontsize{7.7}{9.4}\selectfont
+      \begin{tabular}{@{}>{\bfseries\color{NavIvory}}p{1.65cm}>{\centering\arraybackslash\color{NavIvory}}p{1.55cm}>{\centering\arraybackslash\color{NavIvory}}p{1.95cm}>{\color{NavMuted}}p{1.65cm}@{}}
+        \toprule
+        \textbf{\color{NavMuted}Heuristic} & \textbf{\color{NavMuted}Adm. Viol.} & \textbf{\color{NavMuted}Cons. Viol.} & \textbf{\color{NavMuted}Guarantee} \\
+        \midrule
+        Safe & \color{NavTeal}\textbf{0} & \color{NavTeal}\textbf{0} & \color{NavTeal}Proven \\
+        Traffic & 0* & \color{NavCrimson}\textbf{115,612} & \color{NavAmber}Sampled* \\
+        Zero & 0 & 0 & Baseline \\
+        \bottomrule
+      \end{tabular}%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% SLIDE 08 — WHY LOCAL CONGESTION DID NOT WIN
+\begin{frame}{WHY LOCAL CONGESTION LOST}
+\navslidetag[NavAmber]{MECHANISM ANALYSIS}
+\framesubtitle{Traffic expanded slightly fewer nodes on 17/20 pairs, yet lost overall and broke consistency 115,612 times}
+\vspace{0.08cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{6.90cm}
+    \navcardaccent[7.5pt]{NavAmber}{6.20cm}{%
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavAmber}AGGREGATE VS PER-PAIR TRADE-OFF}\\[5pt]
+      {\fontsize{7.8}{10}\selectfont\color{NavMuted}Long cross-city pair \texttt{POI 118 $\to$ 138}:}\\[5pt]
+      \navbar{Zero}{1.45}{3.20}{1.000}{38,165}{NavStone}\\[4pt]
+      \navbar{Traffic}{1.45}{3.20}{0.710}{27,114}{NavAmber}\\[4pt]
+      \navbar{Safe}{1.45}{3.20}{0.649}{24,769}{NavCyan}\\[6pt]
+      {\fontsize{8.0}{11}\selectfont\color{NavIvory}%
+        Traffic shaved small margins on 17/20 pairs, but \textbf{\color{NavAmber}+2,345 extra nodes} on \texttt{118 $\to$ 138} pushed its 20-pair total \textbf{\color{NavAmber}+1.3\% (+1,336)} above Safe.%
+      }%
+    }
+  \end{column}
+  \begin{column}{6.90cm}
+    \navcardaccent[7.5pt]{NavCrimson}{6.20cm}{%
+      \navhero[NavCrimson]{24}{115,612}\par
+      \vspace{2pt}
+      {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavCrimson}CONSISTENCY VIOLATIONS (12 GOALS)}\\[5pt]
+      {\fontsize{8.1}{11.3}\selectfont\color{NavIvory}%
+        $\bullet$ \textbf{8,662--11,541} failing edges per audited goal\\
+        $\bullet$ Max excess: \textbf{\color{NavCrimson}158.72\,s} (Goal POI 29)\\
+        $\bullet$ 0 sampled admissibility hits on 12 goals is \textit{empirical only}, not a general optimality proof%
+      }%
+    }
+  \end{column}
+\end{columns}\par
+\vspace{0.12cm}
+\navcardaccent[6.5pt]{NavCyan}{13.55cm}{%
+  {\fontsize{8.2}{11}\selectfont\color{NavIvory}%
+    \textbf{\color{NavCyan}Mechanism:} Local outgoing congestion $q_S(n)$ does not bound downstream corridors---uneven scaling perturbs $f$-order and adds outgoing-edge scans at every expansion.%
+  }%
+}
+\end{frame}
+
+% SLIDE 09 — ROUTE CASE STUDY: SAFE VS TRAFFIC
+\begin{frame}{ROUTE CASE STUDY: SAFE VS TRAFFIC}
+\navslidetag[NavCyan]{WEB UI $\cdot$ POI 132 $\to$ 121}
+\framesubtitle{Bách Hóa Xanh (POI 132) $\to$ Bến Thủ Thiêm (POI 121) $\cdot$ identical graph \& weekday 08:00--08:29 profile}
+\vspace{0.08cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{8.35cm}
+    \begin{tikzpicture}[x=1cm,y=1cm]
+      \node[anchor=south west, inner sep=1pt, draw=NavBorder!55, line width=0.8pt,
+            fill=NavPanel, rounded corners=4pt] (shot) at (0,0)
+        {\includegraphics[width=8.05cm]{images/qa_1.png}};
+      % Zoomed Safe metrics loupe placed cleanly in open bottom-center map area (clear of A & B)
+      \node[anchor=south, inner sep=2pt, draw=NavCyan, line width=1.1pt,
+            fill=NavBgDeep, rounded corners=4pt] (loupe) at (5.05,0.12)
+        {\includegraphics[width=2.75cm]{images/qa_safe_zoom.png}};
+      \node[anchor=south east, fill=NavBgDeep, draw=NavCyan, line width=0.6pt,
+            rounded corners=2pt, inner xsep=4pt, inner ysep=1.5pt,
+            font=\ttfamily\fontsize{5.6}{6.6}\selectfont\bfseries, text=NavCyan]
+        at ($(loupe.north east)+(-0.04,-0.02)$) {ZOOM $\cdot$ SAFE METRICS};
+      \draw[NavCyan, line width=0.9pt, dashed, -{Stealth[length=1.8mm]}]
+        (2.15,0.85) -- (loupe.west);
+    \end{tikzpicture}
+  \end{column}
+  \begin{column}{5.55cm}
+    \navcardaccent[5.5pt]{NavCyan}{4.90cm}{%
+      {\ttfamily\fontsize{6.8}{8}\selectfont\bfseries\color{NavCyan}SAFE A* (VERIFIED)}\\[1.5pt]
+      {\navdisplay\fontsize{14.5}{16.5}\selectfont\color{NavIvory}19,003 nodes}\\[1.5pt]
+      {\fontsize{7.7}{10.5}\selectfont\color{NavTeal}195.4\,ms* $\cdot$ 14.1\,km $\cdot$ 33m\,19s $\cdot$ 176 edges $\cdot$ Matches Dijkstra}%
+    }\par\vspace{5pt}
+    \navcardaccent[5.5pt]{NavAmber}{4.90cm}{%
+      {\ttfamily\fontsize{6.8}{8}\selectfont\bfseries\color{NavAmber}TRAFFIC A* (COMPARE)}\\[1.5pt]
+      {\navdisplay\fontsize{14.5}{16.5}\selectfont\color{NavIvory}19,857 nodes}\\[1.5pt]
+      {\fontsize{7.7}{10.5}\selectfont\color{NavAmber}+4.49\% (+854 nodes) $\cdot$ 373.4\,ms* $\cdot$ identical 176-edge route}%
+    }\par\vspace{5pt}
+    \navcardaccent[5.5pt]{NavMuted}{4.90cm}{%
+      {\ttfamily\fontsize{6.5}{7.5}\selectfont\bfseries\color{NavMuted}REPORTING CAVEAT}\\[1.5pt]
+      {\fontsize{7.2}{9.5}\selectfont\color{NavMuted}*Single UI screenshots (not repeated trials); exact cost: 14.094\,km, 1,999.363\,s. UI shows ``Real-time traffic'' label on frozen data.}%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% ======================================================================
+% SECTION 04 — LIMITATIONS & CONCLUSIONS (Slides 10–11)
+% ======================================================================
+\navsetsection{4}{04 / LIMITATIONS \& CONCLUSIONS}
+\navgridoff
+
+% SLIDE 10 — LIMITATIONS AND FUTURE WORKS
+\begin{frame}{LIMITATIONS AND FUTURE WORKS}
+\navslidetag[NavAmber]{HONEST ASSESSMENT}
+\framesubtitle{Results hold for the frozen historical HCMC graph; real-world deployment requires four extensions}
+\vspace{0.08cm}
+
+\noindent\begin{tikzpicture}[x=1cm,y=1cm]
+  \useasboundingbox (0,0.48) rectangle (14.3,4.45);
+  \navlimpair{3.95}{Frozen historical Kaggle snapshot (not live traffic)}{Time-dependent arrival costs \& live-feed validation}
+  \navlimpair{2.96}{Partial exact street matches; modeled density \& flow}{Richer map-matching \& empirical traffic calibration}
+  \navlimpair{1.97}{20 pairs, 12 goals; single UI runtime screenshots}{Multi-profile sweeps + repeated median/IQR timings}
+  \navlimpair{0.98}{Global $V_{\mathrm{upper}}$ weakens $h_{\mathrm{safe}}$; access leg excluded}{ALT landmark bounds \& integrated first/last-mile cost}
+\end{tikzpicture}\par
+\vspace{0.06cm}
+\navcardaccent[6pt]{NavAmber}{13.55cm}{%
+  {\fontsize{8.1}{10.5}\selectfont\color{NavMuted}\textbf{\color{NavAmber}UI transparency:} Align the frontend ``Real-time traffic'' label with historical snapshot metadata so users never confuse static models with live feeds.}%
+}
+\end{frame}
+
+% SLIDE 11 — CONCLUSIONS
+\begin{frame}{CONCLUSIONS}
+\navslidetag[NavCyan]{MAIN TAKEAWAYS}
+\framesubtitle{On Ho Chi Minh City's 44,178-node, 103,810-edge directed road network (weekday 08:00--08:29)}
+\vspace{0.15cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{4.55cm}
+    \navcard[inner sep=8pt]{3.95cm}{%
+      \navhero[NavCyan]{28}{46.1\%}\\[5pt]
+      {\fontsize{9.2}{11.5}\selectfont\bfseries\color{NavIvory}Fewer Expanded Nodes}\\[3pt]
+      {\fontsize{7.8}{10.5}\selectfont\color{NavMuted}Safe A* (103,510) vs Zero/Dijkstra (192,099) across 20 POI pairs}\\[7pt]
+      {\tikz\draw[NavCyan, line width=1.6pt] (0,0) -- (3.6,0);}%
+    }
+  \end{column}
+  \begin{column}{4.55cm}
+    \navcard[inner sep=8pt]{3.95cm}{%
+      \navhero[NavTeal]{28}{0 / 103k}\\[5pt]
+      {\fontsize{9.2}{11.5}\selectfont\bfseries\color{NavIvory}Edge-Bound Violations}\\[3pt]
+      {\fontsize{7.8}{10.5}\selectfont\color{NavMuted}Checked consistency \& admissibility; 20/20 exact Dijkstra matches}\\[7pt]
+      {\tikz\draw[NavTeal, line width=1.6pt] (0,0) -- (3.6,0);}%
+    }
+  \end{column}
+  \begin{column}{4.55cm}
+    \navcard[inner sep=8pt]{3.95cm}{%
+      \navhero[NavAmber]{26}{115,612}\\[5pt]
+      {\fontsize{9.2}{11.5}\selectfont\bfseries\color{NavIvory}Traffic Consistency Violations}\\[3pt]
+      {\fontsize{7.8}{10.5}\selectfont\color{NavMuted}+1.3\% more nodes overall; local congestion lacks guarantee}\\[7pt]
+      {\tikz\draw[NavAmber, line width=1.6pt] (0,0) -- (3.6,0);}%
+    }
+  \end{column}
+\end{columns}\par
+\vspace{0.20cm}
+\navcardaccent[6.5pt]{NavBorder}{13.55cm}{%
+  {\centering\fontsize{8.5}{11}\selectfont\color{NavIvory}Validated Safe A* guarantees optimal modeled routes while cutting nearly half of Dijkstra's search work.\par}%
+}
+\vspace{0.22cm}
+\noindent\begin{minipage}{\textwidth}
+  {\navdisplay\fontsize{16}{19}\selectfont\color{NavAmber}QUESTIONS?}
+  \hfill
+  {\ttfamily\fontsize{8}{10}\selectfont\color{NavCyan}\href{https://github.com/Tuancoolboy/PathFinding_HCM}{github.com/Tuancoolboy/PathFinding\_HCM}}
+\end{minipage}
+\end{frame}
+
+% ======================================================================
+% APPENDIX — Q&A BACKUP SLIDES (Q1–Q5)
+% ======================================================================
+\navstartappendix
+
+% Q1 — TRAFFIC COST MODEL & 5-TIER FALLBACK
+\begin{frame}{TRAFFIC COST MODEL \& 5-TIER FALLBACK}
+\navslidetag[NavAmber]{Q\&A BACKUP $\cdot$ Q1}
+\framesubtitle{Deriving directed edge travel times from Kaggle historical observations and OSM road classes}
+\vspace{0.12cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{6.85cm}
+    \navcardaccent[8pt]{NavCyan}{6.20cm}{%
+      {\ttfamily\fontsize{7.4}{8.8}\selectfont\bfseries\color{NavCyan}EDGE COST \& SPEED CONSTRAINTS}\\[5pt]
+      {\fontsize{8.2}{11.8}\selectfont\color{NavIvory}%
+        $\bullet$ Edge cost: $c(e) = \dfrac{3.6\,L_e}{v_e}$ seconds\\
+        $\bullet$ Median of valid Kaggle observations ($\ge 3$ obs)\\
+        $\bullet$ Clamped to $[5, 100]\;\mathrm{km/h}$ and capped by free-flow speed\\
+        $\bullet$ Density \& flow are model-derived, not raw counts%
+      }%
+    }
+  \end{column}
+  \begin{column}{6.85cm}
+    \navcardaccent[8pt]{NavAmber}{6.20cm}{%
+      {\ttfamily\fontsize{7.4}{8.8}\selectfont\bfseries\color{NavAmber}ORDERED 5-TIER FALLBACK}\\[5pt]
+      {\fontsize{8.2}{12.5}\selectfont\color{NavIvory}%
+        \textbf{1.} Same street + time bucket\\
+        \textbf{2.} Same street across all times\\
+        \textbf{3.} Same road class + time bucket\\
+        \textbf{4.} Same road class across all times\\
+        \textbf{5.} Deterministic OSM road-class/time profile%
+      }%
+    }
+  \end{column}
+\end{columns}\par
+\vspace{0.16cm}
+\navcardaccent[7pt]{NavBorder}{13.55cm}{%
+  {\fontsize{8.2}{11.2}\selectfont\color{NavIvory}\textbf{\color{NavCyan}Provenance tracking:} Every edge stores its assigned source tier, observation count, and quality flag in \texttt{hcmc\_routing\_graph\_final.graphml}.}%
+}
+\end{frame}
+
+% Q2 — AUDIT PROTOCOL & REPRODUCIBILITY
+\begin{frame}{AUDIT PROTOCOL \& REPRODUCIBILITY}
+\navslidetag[NavTeal]{Q\&A BACKUP $\cdot$ Q2}
+\framesubtitle{Deterministic verification via reverse Dijkstra, SHA-256 artifact hashes, and unit tests}
+\vspace{0.12cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{6.85cm}
+    \navcardaccent[8pt]{NavTeal}{6.20cm}{%
+      {\ttfamily\fontsize{7.4}{8.8}\selectfont\bfseries\color{NavTeal}EXHAUSTIVE AUDIT (SEED 42)}\\[5pt]
+      {\fontsize{8.2}{12}\selectfont\color{NavIvory}%
+        \navcheck\ \ Reverse Dijkstra computes exact $h^*(n,t)$ at all \textbf{44,022} reachable nodes for 12 goals\\
+        \navcheck\ \ Checks admissibility ($h \le h^*$), consistency on all \textbf{103,810} edges, and edge-bound margin\\
+        \navcheck\ \ Audit tolerance $10^{-6}\text{ s}$; load check is strict%
+      }%
+    }
+  \end{column}
+  \begin{column}{6.85cm}
+    \navcardaccent[8pt]{NavCyan}{6.20cm}{%
+      {\ttfamily\fontsize{7.4}{8.8}\selectfont\bfseries\color{NavCyan}REPRODUCIBILITY CONTROLS}\\[5pt]
+      {\fontsize{8.2}{12}\selectfont\color{NavIvory}%
+        $\bullet$ \textbf{Artifact:} \texttt{report/evaluation-summary.json} logs SHA-256 of GraphML, POIs, and \texttt{config.yaml}\\
+        $\bullet$ \textbf{Tests:} 15/15 unit tests + synthetic regression test confirming Traffic violations\\
+        $\bullet$ \textbf{Scope:} Deterministic node counts; runtime excluded from speedup claims%
+      }%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% Q3 — PER-PAIR NODE EXPANSION HIGHLIGHTS
+\begin{frame}{PER-PAIR NODE EXPANSIONS}
+\navslidetag[NavCyan]{Q\&A BACKUP $\cdot$ Q3}
+\framesubtitle{Representative sampled pairs from evaluation-summary.json (seed 42, weekday 08:00--08:29)}
+\vspace{0.10cm}
+\navcard[inner sep=7pt]{13.55cm}{%
+  \renewcommand{\arraystretch}{1.16}%
+  \fontsize{8.1}{9.8}\selectfont
+  \begin{tabular}{@{}>{\ttfamily\bfseries\color{NavAmber}}lcccccc@{}}
+    \toprule
+    \textbf{\color{NavMuted}POI Pair} & \textbf{\color{NavMuted}Cost (s)} & \textbf{\color{NavMuted}Safe Nodes} & \textbf{\color{NavMuted}Traffic Nodes} & \textbf{\color{NavMuted}Zero Nodes} & \textbf{\color{NavMuted}Safe / Zero} & \textbf{\color{NavMuted}Traffic $-$ Safe} \\
+    \midrule
+    92 $\to$ 89   & 66.32    & \color{NavCyan}\textbf{18}     & 17     & 28     & 64.3\% & \color{NavTeal}$-1$ \\
+    108 $\to$ 57  & 565.75   & \color{NavCyan}\textbf{1,767}  & 1,700  & 3,358  & 52.6\% & \color{NavTeal}$-67$ \\
+    60 $\to$ 130  & 880.39   & \color{NavCyan}\textbf{3,351}  & 3,263  & 8,390  & 39.9\% & \color{NavTeal}$-88$ \\
+    148 $\to$ 50  & 1,007.44 & \color{NavCyan}\textbf{5,994}  & 5,923  & 13,580 & 44.1\% & \color{NavTeal}$-71$ \\
+    32 $\to$ 97   & 1,429.33 & \color{NavCyan}\textbf{9,675}  & 9,709  & 17,374 & 55.7\% & \color{NavAmber}$+34$ \\
+    118 $\to$ 138 & 2,243.32 & \color{NavCyan}\textbf{24,769} & 27,114 & 38,165 & 64.9\% & \color{NavCrimson}$+2,345$ \\
+    \midrule
+    \textbf{Total (20 pairs)} & \textbf{20/20 match} & \color{NavCyan}\textbf{103,510} & \color{NavAmber}\textbf{104,846} & \textbf{192,099} & \color{NavTeal}\textbf{53.9\%} & \color{NavCrimson}\textbf{$+1,336$} \\
+    \bottomrule
+  \end{tabular}%
+}\par
+\vspace{0.14cm}
+\navcardaccent[6.5pt]{NavAmber}{13.55cm}{%
+  {\fontsize{8.1}{10.8}\selectfont\color{NavIvory}%
+    \textbf{\color{NavAmber}Insight:} Across all 20 pairs, Safe saves 33.2\%--60.1\% of expansions vs Zero. Traffic's small gains on 17 pairs are outweighed by its $+2,345$-node penalty on the longest route.%
+  }%
+}
+\end{frame}
+
+% Q4 — WHY CUSTOM A* OVER CONTRACTION HIERARCHIES?
+\begin{frame}{CUSTOM A* VS CONTRACTION HIERARCHIES}
+\navslidetag[NavCyan]{Q\&A BACKUP $\cdot$ Q4}
+\framesubtitle{Positioning against OSRM, GraphHopper, and future landmark acceleration}
+\vspace{0.12cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{6.85cm}
+    \navcardaccent[8pt]{NavAmber}{6.20cm}{%
+      {\ttfamily\fontsize{7.4}{8.8}\selectfont\bfseries\color{NavAmber}PREPROCESSED ENGINES (OSRM / CH)}\\[5pt]
+      {\fontsize{8.2}{12}\selectfont\color{NavIvory}%
+        $\bullet$ Contraction Hierarchies achieve millisecond queries on static road weights\\
+        $\bullet$ However, shifting traffic profiles invalidate shortcuts and require expensive hierarchy rebuilds\\
+        $\bullet$ Less transparent for educational heuristic auditing%
+      }%
+    }
+  \end{column}
+  \begin{column}{6.85cm}
+    \navcardaccent[8pt]{NavCyan}{6.20cm}{%
+      {\ttfamily\fontsize{7.4}{8.8}\selectfont\bfseries\color{NavCyan}OUR PROFILE-BASED SAFE A*}\\[5pt]
+      {\fontsize{8.2}{12}\selectfont\color{NavIvory}%
+        \navcheck\ \ Zero heavy preprocessing; switches cleanly across historical snapshots\\
+        \navcheck\ \ Explicit per-edge bound check + node/frontier trace for UI inspection\\
+        \navcheck\ \ \textbf{Next step:} ALT (A* + Landmarks + Triangle inequality) tightens lower bounds while keeping exactness%
+      }%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+% Q5 — GROUP 7 TEAM & REFERENCES (Vietnamese Unicode in Inter!)
+\begin{frame}{GROUP 7 $\cdot$ CC01 — TEAM \& REFERENCES}
+\navslidetag[NavCyan]{Q\&A BACKUP $\cdot$ Q5}
+\framesubtitle{CO3061 Introduction to Artificial Intelligence $\cdot$ Advisor: Dr. Nguyễn Quốc Minh}
+\vspace{0.04cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{8.9cm}
+    \navcard[inner sep=5pt]{8.35cm}{%
+      \setlength{\tabcolsep}{4pt}%
+      \renewcommand{\arraystretch}{1.04}%
+      \fontsize{7.0}{8.4}\selectfont
+      \begin{tabular}{@{}>{\color{NavIvory}}p{2.45cm}>{\ttfamily\color{NavCyan}}p{1.05cm}>{\color{NavMuted}}p{4.20cm}@{}}
+        \toprule
+        \textbf{\color{NavAmber}Member} & \textbf{\color{NavAmber}ID} & \textbf{\color{NavAmber}Primary Responsibility} \\
+        \midrule
+        Nguyễn Quốc Hiệu & 2352344 & OSM collection, POIs \& study area \\
+        Quách Hoàng Phú & 2352922 & Traffic cleaning \& fallback estimates \\
+        Chu Nguyễn Tuấn Anh & 2352022 & Traffic-source audit \& documentation \\
+        Lê Hoàng Chí Vĩ & 2353336 & Directed graph, costs \& edge checks \\
+        Vũ Hải Tuấn & 2353280 & Custom A*, parallel edges \& routing \\
+        Nguyễn Lê Đăng Vinh & 2353330 & Safe/Traffic heuristics \& proofs \\
+        Dương Nguyễn Tấn Đạt & 2352222 & Map interface \& route visualization \\
+        Đỗ Thái Phong & 2352903 & Evaluation, Dijkstra audit \& review \\
+        \bottomrule
+      \end{tabular}%
+    }
+  \end{column}
+  \begin{column}{4.95cm}
+    \navcardaccent[6.5pt]{NavAmber}{4.45cm}{%
+      {\ttfamily\fontsize{6.8}{7.8}\selectfont\bfseries\color{NavAmber}KEY REFERENCES}\\[4pt]
+      {\fontsize{7.2}{9.6}\selectfont\color{NavMuted}%
+        $\bullet$ Hart, Nilsson \& Raphael (1968): \textit{A* formal basis}\\
+        $\bullet$ Dijkstra (1959): \textit{Shortest-path algorithm}\\
+        $\bullet$ Boeing (2017): \textit{OSMnx street networks}\\
+        $\bullet$ Bast et al. (2016): \textit{Route planning in transportation networks}\\
+        $\bullet$ Kaggle: \textit{Traffic Flow Data in HCMC}%
+      }%
+    }\par\vspace{6pt}
+    \navcard[inner sep=6pt]{4.45cm}{%
+      \centering
+      \includegraphics[height=0.58cm]{images/BK.png}\\[3pt]
+      {\fontsize{7.3}{9}\selectfont\color{NavIvory}HCMUT $\cdot$ VNU-HCM}\\
+      {\ttfamily\fontsize{6.4}{7.8}\selectfont\color{NavTeal}\href{https://github.com/Tuancoolboy/PathFinding_HCM}{Tuancoolboy/PathFinding\_HCM}}%
+    }
+  \end{column}
+\end{columns}
+\end{frame}
+
+\end{document}

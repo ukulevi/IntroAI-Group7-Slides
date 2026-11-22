@@ -1,0 +1,35 @@
+# LaTeX auxiliary & build outputs
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdv
+
+# Compiled slide PDFs (built automatically by GitHub Actions -> Artifacts & Release `latest`)
+*.pdf
+!**/images/*.pdf
+
+outputs/
+artifacts/
+release_pdfs/
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json

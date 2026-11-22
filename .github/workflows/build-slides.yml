@@ -1,0 +1,211 @@
+name: Build Presentation Slides (XeLaTeX)
+
+on:
+  push:
+    branches: ['main']
+    paths:
+      - 'hw1/**'
+      - 'hw2/**'
+      - '.github/workflows/build-slides.yml'
+  pull_request:
+    branches: ['main']
+    paths:
+      - 'hw1/**'
+      - 'hw2/**'
+      - '.github/workflows/build-slides.yml'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Which deck(s) to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - hw1
+          - hw2
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-slides-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect:
+    name: Detect changed decks
+    runs-on: ubuntu-latest
+    outputs:
+      hw1: ${{ steps.filter.outputs.hw1 }}
+      hw2: ${{ steps.filter.outputs.hw2 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Determine decks to build
+        id: filter
+        run: |
+          hw1=false
+          hw2=false
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            case "${{ inputs.target }}" in
+              all) hw1=true; hw2=true ;;
+              hw1) hw1=true ;;
+              hw2) hw2=true ;;
+            esac
+          elif [ "${{ github.event_name }}" = "push" ] && [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            hw1=true
+            hw2=true
+          else
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+            else
+              changed=$(git diff --name-only "${{ github.event.before }}..${{ github.sha }}")
+            fi
+
+            echo "Changed files:"
+            echo "$changed"
+
+            if echo "$changed" | grep -qE '^\.github/workflows/build-slides\.yml$'; then
+              hw1=true
+              hw2=true
+            fi
+            if echo "$changed" | grep -qE '^hw1/'; then
+              hw1=true
+            fi
+            if echo "$changed" | grep -qE '^hw2/'; then
+              hw2=true
+            fi
+          fi
+
+          echo "hw1=$hw1" >> "$GITHUB_OUTPUT"
+          echo "hw2=$hw2" >> "$GITHUB_OUTPUT"
+
+  build-hw1:
+    name: Build HW1 Slides (XeLaTeX)
+    needs: detect
+    if: needs.detect.outputs.hw1 == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Prepare output directory
+        run: mkdir -p outputs/hw1
+
+      - name: Compile hw1/main.tex -> IntroAI-HW1-Path-Find-Slide.pdf
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: hw1
+          latexmk_shell_escape: false
+          args: -xelatex -jobname=IntroAI-HW1-Path-Find-Slide -outdir=../outputs/hw1 -halt-on-error -interaction=nonstopmode -file-line-error
+          pre_compile: |
+            if [ ! -f /etc/fonts/conf.d/09-texlive-fonts.conf ]; then
+              conf=$(find /usr/local/texlive -name "texlive-fontconfig.conf" 2>/dev/null | head -n 1)
+              if [ -n "$conf" ]; then
+                cp "$conf" /etc/fonts/conf.d/09-texlive-fonts.conf
+              fi
+            fi
+            fc-cache -f
+            fc-list : family | grep -iE 'cinzel|inter|jetbrains|fira|pagella|heros' | sort -u | head -n 20 || true
+
+      - name: Verify HW1 PDF output
+        run: |
+          test -s outputs/hw1/IntroAI-HW1-Path-Find-Slide.pdf
+          ls -lh outputs/hw1/IntroAI-HW1-Path-Find-Slide.pdf
+
+      - name: Upload HW1 PDF artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: hw1-slides
+          path: outputs/hw1/IntroAI-HW1-Path-Find-Slide.pdf
+          if-no-files-found: error
+
+  build-hw2:
+    name: Build HW2 Slides (XeLaTeX)
+    needs: detect
+    if: needs.detect.outputs.hw2 == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Prepare output directory
+        run: mkdir -p outputs/hw2
+
+      - name: Compile hw2/main.tex -> IntroAI-HW2-WizChess-Slide.pdf
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: hw2
+          latexmk_shell_escape: false
+          args: -xelatex -jobname=IntroAI-HW2-WizChess-Slide -outdir=../outputs/hw2 -halt-on-error -interaction=nonstopmode -file-line-error
+          pre_compile: |
+            if [ ! -f /etc/fonts/conf.d/09-texlive-fonts.conf ]; then
+              conf=$(find /usr/local/texlive -name "texlive-fontconfig.conf" 2>/dev/null | head -n 1)
+              if [ -n "$conf" ]; then
+                cp "$conf" /etc/fonts/conf.d/09-texlive-fonts.conf
+              fi
+            fi
+            fc-cache -f
+            fc-list : family | grep -iE 'cinzel|inter|jetbrains|fira|pagella|heros' | sort -u | head -n 20 || true
+
+      - name: Verify HW2 PDF output
+        run: |
+          test -s outputs/hw2/IntroAI-HW2-WizChess-Slide.pdf
+          ls -lh outputs/hw2/IntroAI-HW2-WizChess-Slide.pdf
+
+      - name: Upload HW2 PDF artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: hw2-slides
+          path: outputs/hw2/IntroAI-HW2-WizChess-Slide.pdf
+          if-no-files-found: error
+
+  release:
+    name: Publish to rolling release (latest)
+    needs: [detect, build-hw1, build-hw2]
+    if: >
+      always() &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      (needs.build-hw1.result == 'success' || needs.build-hw2.result == 'success') &&
+      needs.build-hw1.result != 'failure' &&
+      needs.build-hw2.result != 'failure'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download built slide PDFs
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+
+      - name: Collect PDFs
+        run: |
+          mkdir -p release_pdfs
+          find artifacts -type f -name '*.pdf' -exec cp {} release_pdfs/ \;
+          ls -lh release_pdfs/
+
+      - name: Update rolling GitHub Release (latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          built_at="$(date -u '+%Y-%m-%d %H:%M UTC')"
+          notes="Auto-built XeLaTeX slides from commit \`${GITHUB_SHA}\` (${built_at})."
+
+          if gh release view latest >/dev/null 2>&1; then
+            gh release upload latest release_pdfs/*.pdf --clobber
+            gh release edit latest --title "Latest Slides (Auto-Built)" --notes "$notes"
+          else
+            gh release create latest release_pdfs/*.pdf \
+              --target "$GITHUB_SHA" \
+              --title "Latest Slides (Auto-Built)" \
+              --notes "$notes"
+          fi
