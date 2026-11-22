@@ -103,16 +103,8 @@ jobs:
           root_file: main.tex
           working_directory: hw1
           latexmk_shell_escape: false
-          args: -xelatex -jobname=IntroAI-HW1-Path-Find-Slide -outdir=../outputs/hw1 -halt-on-error -interaction=nonstopmode -file-line-error
-          pre_compile: |
-            if [ ! -f /etc/fonts/conf.d/09-texlive-fonts.conf ]; then
-              conf=$(find /usr/local/texlive -name "texlive-fontconfig.conf" 2>/dev/null | head -n 1)
-              if [ -n "$conf" ]; then
-                cp "$conf" /etc/fonts/conf.d/09-texlive-fonts.conf
-              fi
-            fi
-            fc-cache -f
-            fc-list : family | grep -iE 'cinzel|inter|jetbrains|fira|pagella|heros' | sort -u | head -n 20 || true
+          latexmk_use_xelatex: true
+          args: -jobname=IntroAI-HW1-Path-Find-Slide -outdir=../outputs/hw1 -halt-on-error -interaction=nonstopmode -file-line-error
 
       - name: Verify HW1 PDF output
         run: |
@@ -144,16 +136,8 @@ jobs:
           root_file: main.tex
           working_directory: hw2
           latexmk_shell_escape: false
-          args: -xelatex -jobname=IntroAI-HW2-WizChess-Slide -outdir=../outputs/hw2 -halt-on-error -interaction=nonstopmode -file-line-error
-          pre_compile: |
-            if [ ! -f /etc/fonts/conf.d/09-texlive-fonts.conf ]; then
-              conf=$(find /usr/local/texlive -name "texlive-fontconfig.conf" 2>/dev/null | head -n 1)
-              if [ -n "$conf" ]; then
-                cp "$conf" /etc/fonts/conf.d/09-texlive-fonts.conf
-              fi
-            fi
-            fc-cache -f
-            fc-list : family | grep -iE 'cinzel|inter|jetbrains|fira|pagella|heros' | sort -u | head -n 20 || true
+          latexmk_use_xelatex: true
+          args: -jobname=IntroAI-HW2-WizChess-Slide -outdir=../outputs/hw2 -halt-on-error -interaction=nonstopmode -file-line-error
 
       - name: Verify HW2 PDF output
         run: |
