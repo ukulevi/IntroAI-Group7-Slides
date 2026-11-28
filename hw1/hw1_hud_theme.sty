@@ -1,7 +1,7 @@
 % PathFinding HCMC Dark Navigation HUD Theme for LaTeX Beamer (XeLaTeX)
 % Sibling theme to HW2 Dark HUD — Built for Group 7 · CC01 · HCMUT (CO3061 Intro AI)
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{hw1_hud_theme}[2026/11/22 PathFinding HCMC Dark HUD Beamer Theme]
+\ProvidesPackage{hw1_hud_theme}[2026/11/28 PathFinding HCMC Light HUD Beamer Theme]
 
 \RequirePackage{fontspec}
 \RequirePackage{xcolor}
@@ -31,6 +31,8 @@
 \definecolor{NavIvory}{HTML}{0F172A}    % Deep slate-black primary ink
 \definecolor{NavMuted}{HTML}{475569}    % Crisp readable muted slate
 \definecolor{NavStone}{HTML}{64748B}    % Zero / Dijkstra baseline bar
+\definecolor{NavViolet}{HTML}{6D28D9}   % Joint ALT (high contrast violet)
+\definecolor{NavIndigo}{HTML}{4338CA}   % Separate ALT (high contrast indigo)
 \arrayrulecolor{NavBorder!30}
 
 % ----------------------------------------------------------------------
@@ -83,7 +85,7 @@
 \navgridfalse
 \newif\ifnavappendix
 \navappendixfalse
-\def\nav@appoffset{11}
+\def\nav@appoffset{12}
 
 \newcommand{\navsetsection}[2]{%
   \gdef\nav@section{#1}%
