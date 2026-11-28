@@ -2,7 +2,7 @@
 \usepackage{hw1_hud_theme}
 
 \hypersetup{
-  pdftitle={PathFinding HCMC — Traffic-Aware A* & ALT Routing | HW1},
+  pdftitle={PathFinding HCMC — Traffic-Aware A* and ALT Routing | HW1},
   pdfauthor={Group 7 · CC01 · HCMUT},
   pdfsubject={Introduction to Artificial Intelligence (CO3061)},
   colorlinks=true,
@@ -142,8 +142,8 @@
         % Parallel edges u -> v
         \draw[NavAmber, line width=0.95pt, bend left=26, -{Stealth[length=2mm]}]
           (u) to node[above, font=\ttfamily\fontsize{6.6}{8}\selectfont, text=NavAmber] {k=0: 42s (slow)} (v);
-        \draw[NavCyan, line width=1.25pt, bend right=12, -{Stealth[length=2mm]}]
-          (u) to node[above, yshift=1pt, font=\ttfamily\fontsize{6.6}{8}\selectfont\bfseries, text=NavCyan] {k=1: 19s (fast)} (v);
+        \draw[NavCyan, line width=1.25pt, bend right=15, -{Stealth[length=2mm]}]
+          (u) to node[below, yshift=-2pt, font=\ttfamily\fontsize{6.6}{8}\selectfont\bfseries, text=NavCyan] {k=1: 19s (fast)} (v);
 
         \draw[NavBorder!80, line width=0.85pt, -{Stealth[length=2mm]}] (w) -- node[below right, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {28s} (v);
         \draw[NavCyan, line width=1.1pt, -{Stealth[length=2mm]}] (v) -- node[above right, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {12s} (B);
@@ -208,7 +208,7 @@
   \begin{column}{6.95cm}
     \navcardaccent[7pt]{NavCyan}{6.22cm}{%
       {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}KEYED MULTIGRAPH \& 44 TESTS}\\[3pt]
-      {\fontsize{8.1}{11.0}\selectfont\color{NavIvory}Parent \texttt{(u, key)} tracks parallel roads; POI snap legs stay separate. Verified by \textbf{44 tests} (9 modules).}%
+      {\fontsize{7.9}{10.6}\selectfont\color{NavIvory}Parent \texttt{(u, key)} tracks parallel roads; POI snap legs stay separate. Verified by \textbf{44 tests} (9 modules).}%
     }
   \end{column}
 \end{columns}
@@ -227,35 +227,28 @@
 \vspace{0.05cm}
 \begin{columns}[T,onlytextwidth]
   \begin{column}{7.85cm}
-    \navcard[inner sep=7pt]{7.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}SAFE HEURISTIC BOUND \& CONSISTENCY PROOF}\\[2pt]
-      {\fontsize{7.8}{10.0}\selectfont\color{NavIvory}%
-        \setlength{\abovedisplayskip}{3pt}%
-        \setlength{\belowdisplayskip}{3pt}%
-        \[
-          V_{\mathrm{upper}}(S) = 1.001 \max_{e \in E} v_e(S) = \mathbf{74.074\;\mathrm{km/h}}
-        \]
-        \[
-          h_{\mathrm{safe}}(n,t;S) = \frac{3.6\,d_{\mathrm{hav}}(n,t)}{V_{\mathrm{upper}}(S)}
-        \]
-        \textbf{Edge check} ($\forall\,(u,v)$): $c(u,v) \ge \dfrac{3.6\,d_{\mathrm{hav}}(u,v)}{V_{\mathrm{upper}}(S)}$\\[3pt]
+    \navcard[inner sep=6pt]{7.15cm}{%
+      {\ttfamily\fontsize{6.9}{8.0}\selectfont\bfseries\color{NavCyan}SAFE HEURISTIC BOUND \& CONSISTENCY PROOF}\\[2pt]
+      {\fontsize{7.6}{9.6}\selectfont\color{NavIvory}%
+        $V_{\mathrm{upper}}(S) = 1.001 \max_{e \in E} v_e(S) = \mathbf{74.074\;\mathrm{km/h}}$\\[2pt]
+        $h_{\mathrm{safe}}(n,t;S) = \dfrac{3.6\,d_{\mathrm{hav}}(n,t)}{V_{\mathrm{upper}}(S)}$ \quad $\cdot$ \quad \textbf{Edge check:} $c(u,v) \ge \dfrac{3.6\,d_{\mathrm{hav}}(u,v)}{V_{\mathrm{upper}}(S)}$\\[4pt]
         \centering
         \begin{tikzpicture}[x=1cm,y=1cm]
-          \tikzstyle{tnode}=[circle, draw=NavCyan, fill=NavPanelAlt, minimum size=0.46cm,
-                             inner sep=0pt, font=\fontsize{7.5}{8.5}\selectfont\bfseries, text=NavIvory]
-          \node[tnode] (u) at (0, 0.72) {$u$};
-          \node[tnode] (v) at (3.2, 0.72) {$v$};
-          \node[tnode, draw=NavTeal, text=NavTeal] (t) at (5.6, 0.12) {$t$};
+          \tikzstyle{tnode}=[circle, draw=NavCyan, fill=NavPanelAlt, minimum size=0.42cm,
+                             inner sep=0pt, font=\fontsize{7.2}{8.2}\selectfont\bfseries, text=NavIvory]
+          \node[tnode] (u) at (0, 0.56) {$u$};
+          \node[tnode] (v) at (3.2, 0.56) {$v$};
+          \node[tnode, draw=NavTeal, text=NavTeal] (t) at (5.6, 0.08) {$t$};
           \draw[NavCyan, line width=1.0pt, -{Stealth[length=1.8mm]}]
-            (u) -- node[above, font=\ttfamily\fontsize{6.6}{7.5}\selectfont, text=NavCyan] {c(u,v)} (v);
+            (u) -- node[above, font=\ttfamily\fontsize{6.5}{7.5}\selectfont, text=NavCyan] {c(u,v)} (v);
           \draw[NavBorder!75, dashed, line width=0.85pt, -{Stealth[length=1.6mm]}]
-            (v) -- node[above right, font=\ttfamily\fontsize{6.5}{7.5}\selectfont, text=NavMuted] {h\_safe(v,t)} (t);
+            (v) -- node[above right, font=\ttfamily\fontsize{6.4}{7.4}\selectfont, text=NavMuted] {h\_safe(v,t)} (t);
           \draw[NavTeal, dashed, line width=0.85pt, -{Stealth[length=1.6mm]}]
-            (u) to[bend right=12] node[below, font=\ttfamily\fontsize{6.5}{7.5}\selectfont, text=NavTeal] {h\_safe(u,t)} (t);
-        \end{tikzpicture}\\[2pt]
-        \fontsize{7.5}{9.5}\selectfont
+            (u) to[bend right=10] node[below, font=\ttfamily\fontsize{6.4}{7.4}\selectfont, text=NavTeal] {h\_safe(u,t)} (t);
+        \end{tikzpicture}\\[3pt]
+        \fontsize{7.4}{9.4}\selectfont
         $h_{\mathrm{safe}}(u,t) \le \frac{3.6\,d(u,v)}{V_{\mathrm{upper}}} + h_{\mathrm{safe}}(v,t) \le c(u,v) + h_{\mathrm{safe}}(v,t)$\\[2pt]
-        \textbf{\color{NavTeal}Consistent $\Longrightarrow$ Admissible $\Longrightarrow$ Optimal A*}%
+        \textbf{\color{NavTeal}Consistent $\Rightarrow$ Admissible $\Rightarrow$ Optimal A*}%
       }%
     }
   \end{column}
@@ -321,7 +314,7 @@
         \node[lnode, draw=NavCrimson, text=NavCrimson] (v2) at (2.35,0.95) {$v_2$};
         \node[lnode, draw=NavTeal, fill=NavTeal!12!white, text=NavTeal] (v3) at (2.35,0.25) {$v_3$};
         \draw[NavMuted, line width=0.8pt, -{Stealth[length=1.5mm]}] (n) -- node[above left, font=\ttfamily\fontsize{6.2}{7}\selectfont] {37.5} (v1);
-        \draw[NavCrimson, line width=0.95pt, -{Stealth[length=1.5mm]}] (n) -- node[above, font=\ttfamily\fontsize{6.2}{7}\selectfont, text=NavCrimson] {150} (v2);
+        \draw[NavCrimson, line width=0.95pt, -{Stealth[length=1.5mm]}] (n) -- node[fill=NavPanel, inner sep=1pt, pos=0.60, font=\ttfamily\fontsize{6.2}{7}\selectfont, text=NavCrimson] {150} (v2);
         \draw[NavTeal, line width=1.15pt, -{Stealth[length=1.6mm]}] (n) -- node[below left, font=\ttfamily\fontsize{6.2}{7}\selectfont\bfseries, text=NavTeal] {50} (v3);
         \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont, text=NavMuted] at (2.68,1.65) {+100 = 137.5s};
         \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont, text=NavCrimson] at (2.68,0.95) {+40 = 190s (cong.)};
@@ -575,8 +568,8 @@
       {\fontsize{7.2}{9.0}\selectfont\color{NavMuted}%
         \textcolor{NavViolet}{$\blacksquare$} Joint $>$ Sep \quad \textcolor{NavStone}{$\blacksquare$} Equal \quad \textcolor{NavIndigo}{$\blacksquare$} Sep $>$ Joint%
       }\\[6pt]
-      \navkpi[NavViolet]{2.70cm}{17.5 ms · 26.6 KB}{Joint ALT prep/cache}\hfill
-      \navkpi[NavIndigo]{2.70cm}{27.8 ms · 53.0 KB}{Separate ALT · 2x tables}%
+      \navkpi[NavViolet]{2.86cm}{17.5ms · 26.6KB}{Joint ALT prep/cache}\hfill
+      \navkpi[NavIndigo]{2.86cm}{27.8ms · 53.0KB}{Separate ALT · 2x tables}%
     }
   \end{column}
 \end{columns}\par
@@ -611,20 +604,20 @@
     \end{tikzpicture}
   \end{column}
   \begin{column}{5.85cm}
-    \navcardaccent[6pt]{NavCyan}{5.20cm}{%
-      {\ttfamily\fontsize{6.6}{7.8}\selectfont\bfseries\color{NavCyan}POI 132 $\to$ 121 (ARCHIVED FULL GRAPH)}\\[5pt]
-      \navkpi[NavCyan]{2.40cm}{14.1 km}{14.094\,km}\hfill
-      \navkpi[NavTeal]{2.40cm}{33m 19s}{176 edges}\\[5pt]
-      \navkpi[NavCyan]{2.40cm}{19,003}{Safe nodes · 195\,ms*}\hfill
-      \navkpi[NavAmber]{2.40cm}{+4.49\%}{Legacy 19,857 · 373\,ms*}%
-    }\par\vspace{6pt}
-    \navcardaccent[6pt]{NavViolet}{5.20cm}{%
-      {\ttfamily\fontsize{6.6}{7.8}\selectfont\bfseries\color{NavViolet}UPGRADED 5-METHOD MAPLIBRE UI}\\[3pt]
-      {\fontsize{7.6}{10.2}\selectfont\color{NavIvory}%
+    \navcardaccent[5pt]{NavCyan}{5.25cm}{%
+      {\ttfamily\fontsize{6.5}{7.6}\selectfont\bfseries\color{NavCyan}POI 132 $\to$ 121 (ARCHIVED FULL GRAPH)}\\[3pt]
+      \navkpi[NavCyan]{2.42cm}{14.1 km}{14.094\,km}\hfill
+      \navkpi[NavTeal]{2.42cm}{33m 19s}{176 edges}\\[3pt]
+      \navkpi[NavCyan]{2.42cm}{19,003}{Safe · 195\,ms*}\hfill
+      \navkpi[NavAmber]{2.42cm}{+4.49\%}{Legacy · 373\,ms*}%
+    }\par\vspace{4pt}
+    \navcardaccent[5pt]{NavViolet}{5.25cm}{%
+      {\ttfamily\fontsize{6.5}{7.6}\selectfont\bfseries\color{NavViolet}UPGRADED 5-METHOD MAPLIBRE UI}\\[2pt]
+      {\fontsize{7.3}{9.2}\selectfont\color{NavIvory}%
         $\bullet$ All \textbf{5 verified heuristics} + compare\\
         $\bullet$ \textbf{Custom Landmarks:} Airport / 1--32\\
-        $\bullet$ \texttt{--demo} mode (simulated 150 places)\\[4pt]
-        {\fontsize{6.9}{8.8}\selectfont\color{NavMuted}*Single-run UI capture; legacy ``Real-time'' badge on frozen data.}%
+        $\bullet$ \texttt{--demo} mode (simulated 150 places)\\[2pt]
+        {\fontsize{6.6}{8.2}\selectfont\color{NavMuted}*Single-run capture; legacy ``Real-time'' label on frozen data.}%
       }%
     }
   \end{column}
@@ -752,9 +745,9 @@
       {\fontsize{8.0}{11.2}\selectfont\color{NavIvory}%
         For any landmark $\ell \in L$ and edge $(u,v)$ with $c(u,v)\ge 0$:\\[3pt]
         \textbf{Forward:} $d(\ell,v) \le d(\ell,u) + c(u,v)$\\
-        $\implies [d(\ell,t)-d(\ell,u)] - [d(\ell,t)-d(\ell,v)] \le c(u,v)$\\[3pt]
+        $\Rightarrow [d(\ell,t)-d(\ell,u)] - [d(\ell,t)-d(\ell,v)] \le c(u,v)$\\[3pt]
         \textbf{Reverse:} $d(u,\ell) \le c(u,v) + d(v,\ell)$\\
-        $\implies [d(u,\ell)-d(t,\ell)] - [d(v,\ell)-d(t,\ell)] \le c(u,v)$\\[3pt]
+        $\Rightarrow [d(u,\ell)-d(t,\ell)] - [d(v,\ell)-d(t,\ell)] \le c(u,v)$\\[3pt]
         \textbf{Separate ALT:} $h_{\mathrm{free}} + h_{\mathrm{delay}} \le C_{\mathrm{free}}(P) + C_{\mathrm{delay}}(P) = C_S(P)$.%
       }%
     }
@@ -887,9 +880,9 @@
 \begin{columns}[T,onlytextwidth]
   \begin{column}{8.9cm}
     \navcard[inner sep=5pt]{8.35cm}{%
-      \setlength{\tabcolsep}{4pt}%
+      \setlength{\tabcolsep}{3.5pt}%
       \renewcommand{\arraystretch}{1.04}%
-      \fontsize{7.0}{8.4}\selectfont
+      \fontsize{6.9}{8.2}\selectfont
       \begin{tabular}{@{}>{\color{NavIvory}}l>{\ttfamily\color{NavCyan}}l>{\color{NavMuted}}l@{}}
         \toprule
         \textbf{\color{NavAmber}Member} & \textbf{\color{NavAmber}ID} & \textbf{\color{NavAmber}Primary Responsibility} \\
