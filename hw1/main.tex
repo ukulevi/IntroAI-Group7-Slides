@@ -108,24 +108,20 @@
 % SLIDE 02 — URBAN ROUTING AS GRAPH SEARCH
 \begin{frame}{URBAN ROUTING AS GRAPH SEARCH}
 \framesubtitle{Minimum travel time on Ho Chi Minh City's directed road network (shortest distance $\neq$ fastest path)}
-\vspace{0.06cm}
+\vspace{0.04cm}
 \begin{columns}[T,onlytextwidth]
   \begin{column}{5.3cm}
     \navhero[NavCyan]{36}{44,178}\par
-    \vspace{2pt}
-    {\fontsize{10}{12}\selectfont\bfseries\color{NavAmber}ROAD GRAPH NODES}\par
+    \vspace{1pt}
+    {\fontsize{9.8}{11.5}\selectfont\bfseries\color{NavAmber}ROAD GRAPH NODES}\par
     \vspace{4pt}
-    {\fontsize{8.8}{11.8}\selectfont\color{NavIvory}Travel speed varies across streets and time of day.}\par
-    \vspace{5pt}
     \navtag[NavTeal]{103,810 DIRECTED EDGES}\par
     \vspace{6pt}
-    \navcardaccent[5.5pt]{NavBorder}{4.7cm}{%
-      {\fontsize{7.7}{10.5}\selectfont\color{NavMuted}%
-        $\bullet$ \textbf{\color{NavIvory}150 POIs}, \textbf{\color{NavCyan}15 categories} (147 snapped nodes)\\
-        $\bullet$ Study box: $\pm 10\text{ km}$ around $(10.7769, 106.7009)$\\
-        $\bullet$ One-way streets + parallel edges (\texttt{MultiDiGraph})
-      }%
-    }
+    \navkpi[NavCyan]{4.75cm}{150 POIs}{15 categories $\cdot$ 147 nodes}\par
+    \vspace{4pt}
+    \navkpi[NavAmber]{4.75cm}{20 x 20 km}{$\pm$10\,km HCMC study box}\par
+    \vspace{4pt}
+    \navkpi[NavTeal]{4.75cm}{MultiDiGraph}{One-way \& parallel roads}
   \end{column}
   \begin{column}{8.6cm}
     \navcard{7.85cm}{%
@@ -136,7 +132,7 @@
                            font=\fontsize{8}{9}\selectfont\bfseries, text=NavIvory]
         \node[gnode, draw=NavTeal, fill=NavTeal!14!white, text=NavTeal] (A) at (0.7, 1.85) {A};
         \node[gnode] (u) at (2.8, 2.55) {$u$};
-        \node[gnode] (w) at (2.8, 0.95) {$w$};
+        \node[gnode] (w) at (2.8, 0.80) {$w$};
         \node[gnode] (v) at (5.3, 2.15) {$v$};
         \node[gnode, draw=NavCrimson, fill=NavCrimson!14!white, text=NavCrimson] (B) at (7.1, 1.45) {B};
 
@@ -146,8 +142,8 @@
         % Parallel edges u -> v
         \draw[NavAmber, line width=0.95pt, bend left=26, -{Stealth[length=2mm]}]
           (u) to node[above, font=\ttfamily\fontsize{6.6}{8}\selectfont, text=NavAmber] {k=0: 42s (slow)} (v);
-        \draw[NavCyan, line width=1.25pt, bend right=18, -{Stealth[length=2mm]}]
-          (u) to node[below, yshift=-1pt, font=\ttfamily\fontsize{6.6}{8}\selectfont\bfseries, text=NavCyan] {k=1: 19s (fast)} (v);
+        \draw[NavCyan, line width=1.25pt, bend right=12, -{Stealth[length=2mm]}]
+          (u) to node[above, yshift=1pt, font=\ttfamily\fontsize{6.6}{8}\selectfont\bfseries, text=NavCyan] {k=1: 19s (fast)} (v);
 
         \draw[NavBorder!80, line width=0.85pt, -{Stealth[length=2mm]}] (w) -- node[below right, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {28s} (v);
         \draw[NavCyan, line width=1.1pt, -{Stealth[length=2mm]}] (v) -- node[above right, font=\ttfamily\fontsize{6.8}{8}\selectfont, text=NavMuted] {12s} (B);
@@ -155,64 +151,64 @@
         % Formula strip
         \node[fill=NavPanelAlt, draw=NavBorder!45, rounded corners=3pt, inner xsep=8pt, inner ysep=3.5pt,
               font=\ttfamily\fontsize{7.5}{9}\selectfont, text=NavAmber]
-          at (3.9, 0.15) {c(e) = 3.6 * L\_e / v\_e \ (seconds), \ \ v\_e > 0};
+          at (3.9, 0.08) {c(e) = 3.6 * L\_e / v\_e \ (seconds), \ \ v\_e > 0};
       \end{tikzpicture}
     }
   \end{column}
 \end{columns}
 \end{frame}
 
-% SLIDE 03 — SYSTEM ARCHITECTURE & TRAFFIC PIPELINE
+% SLIDE 03 — SYSTEM & TRAFFIC PIPELINE
 \navgridoff
-\begin{frame}{SYSTEM ARCHITECTURE \& TRAFFIC PIPELINE}
+\begin{frame}{SYSTEM \& TRAFFIC PIPELINE}
 \navslidetag[NavCyan]{DESIGN $\cdot$ UNIFIED ENGINE}
-\framesubtitle{Three-stage pipeline from OSMnx + Kaggle speeds to verified 5-heuristic A* and FIFO time-dependent routing}
-\vspace{0.08cm}
+\framesubtitle{Three-stage pipeline from OSMnx + Kaggle speeds to verified 5-heuristic A* and FIFO time routing}
+\vspace{0.10cm}
 
 \noindent\begin{tikzpicture}[x=1cm,y=1cm]
-  \useasboundingbox (0,0) rectangle (14.3,1.95);
+  \useasboundingbox (0,0) rectangle (14.3,2.05);
   \node[fill=NavPanel, draw=NavBorder!45, rounded corners=5pt, inner sep=7pt,
-        text width=3.65cm, minimum height=1.68cm, anchor=west, text=NavIvory] (c1) at (0,0.98) {%
+        text width=3.65cm, minimum height=1.75cm, anchor=west, text=NavIvory] (c1) at (0,1.02) {%
     {\ttfamily\fontsize{6.8}{8}\selectfont\bfseries\color{NavAmber}01 $\cdot$ DATA \& TRAFFIC}\\[3pt]
     {\fontsize{10.2}{12.5}\selectfont\bfseries\color{NavIvory}OSMnx +}\\
     {\fontsize{10.2}{12.5}\selectfont\bfseries\color{NavIvory}Kaggle HCMC}\\[2pt]
-    {\fontsize{7.3}{9.2}\selectfont\color{NavMuted}Median speed (5--100\,km/h) + 5-tier fallback}%
+    {\fontsize{7.3}{9.2}\selectfont\color{NavMuted}Median (5--100\,km/h) + 5-tier fallback}%
   };
-  \draw[NavCyan, line width=1.1pt, -{Stealth[length=2.2mm]}] (4.18,0.98) -- (4.88,0.98);
+  \draw[NavCyan, line width=1.1pt, -{Stealth[length=2.2mm]}] (4.18,1.02) -- (4.88,1.02);
 
   \node[fill=NavPanelAlt, draw=NavCyan!65, line width=0.9pt, rounded corners=5pt, inner sep=7pt,
-        text width=3.95cm, minimum height=1.68cm, anchor=west, text=NavIvory] (c2) at (4.94,0.98) {%
+        text width=3.95cm, minimum height=1.75cm, anchor=west, text=NavIvory] (c2) at (4.94,1.02) {%
     {\ttfamily\fontsize{6.8}{8}\selectfont\bfseries\color{NavCyan}02 $\cdot$ UNIFIED A* ENGINE}\\[3pt]
     {\fontsize{10.2}{12.5}\selectfont\bfseries\color{NavIvory}5 Verified Heuristics}\\
     {\fontsize{10.2}{12.5}\selectfont\bfseries\color{NavIvory}+ FIFO Time Routing}\\[2pt]
     {\fontsize{7.3}{9.2}\selectfont\color{NavMuted}Zero, Safe, Edge-Local, Sep/Joint ALT}%
   };
-  \draw[NavCyan, line width=1.1pt, -{Stealth[length=2.2mm]}] (9.42,0.98) -- (10.10,0.98);
+  \draw[NavCyan, line width=1.1pt, -{Stealth[length=2.2mm]}] (9.42,1.02) -- (10.10,1.02);
 
   \node[fill=NavPanel, draw=NavBorder!45, rounded corners=5pt, inner sep=7pt,
-        text width=3.55cm, minimum height=1.68cm, anchor=west, text=NavIvory] (c3) at (10.14,0.98) {%
+        text width=3.55cm, minimum height=1.75cm, anchor=west, text=NavIvory] (c3) at (10.14,1.02) {%
     {\ttfamily\fontsize{6.8}{8}\selectfont\bfseries\color{NavTeal}03 $\cdot$ UI \& AUDIT}\\[3pt]
-    {\fontsize{10.2}{12.5}\selectfont\bfseries\color{NavIvory}MapLibre/Leaflet}\\
+    {\fontsize{10.2}{12.5}\selectfont\bfseries\color{NavIvory}MapLibre / Leaflet}\\
     {\fontsize{10.2}{12.5}\selectfont\bfseries\color{NavIvory}+ NetworkX Audit}\\[2pt]
     {\fontsize{7.3}{9.2}\selectfont\color{NavMuted}GeoJSON routes + rev.-Dijkstra check}%
   };
 \end{tikzpicture}\par
 
-\vspace{0.08cm}
+\vspace{0.12cm}
 \noindent\navdivider{14.3}\par
-\vspace{0.08cm}
+\vspace{0.12cm}
 
 \begin{columns}[T,onlytextwidth]
   \begin{column}{6.95cm}
     \navcardaccent[7pt]{NavAmber}{6.22cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavAmber}FROZEN SNAPSHOT + FIFO TIME SUPPORT}\\[3pt]
-      {\fontsize{8.0}{10.8}\selectfont\color{NavIvory}Static benchmarks use frozen \texttt{weekday 08:00--08:29}. Time-dependent FIFO routing (\texttt{src/time\_routing.py}) supports \textbf{Safe} \& \textbf{Zero} across periods with snapshot guards.}%
+      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavAmber}FROZEN + FIFO TIME ROUTING}\\[3pt]
+      {\fontsize{8.1}{11.0}\selectfont\color{NavIvory}Static benchmarks freeze \texttt{weekday 08:00--08:29}; FIFO routing (\texttt{time\_routing.py}) runs \textbf{Safe} \& \textbf{Zero}.}%
     }
   \end{column}
   \begin{column}{6.95cm}
     \navcardaccent[7pt]{NavCyan}{6.22cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}KEYED MULTIGRAPH, ACCESS \& 44 TESTS}\\[3pt]
-      {\fontsize{8.0}{10.8}\selectfont\color{NavIvory}Parent pointers store \texttt{(u, key)} for parallel edges. POI-to-road access legs are separated from driving cost. Verified by \textbf{44 unit tests} across \textbf{9 test modules}.}%
+      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}KEYED MULTIGRAPH \& 44 TESTS}\\[3pt]
+      {\fontsize{8.1}{11.0}\selectfont\color{NavIvory}Parent \texttt{(u, key)} tracks parallel roads; POI snap legs stay separate. Verified by \textbf{44 tests} (9 modules).}%
     }
   \end{column}
 \end{columns}
@@ -224,29 +220,42 @@
 \navsetsection{2}{02 / ALGORITHMS \& PROOFS}
 \navgridon
 
-% SLIDE 04 — CUSTOM A* & SAFE HEURISTIC PROOF
-\begin{frame}{CUSTOM A* \& SAFE HEURISTIC PROOF}
+% SLIDE 04 — CUSTOM A* & SAFE PROOF
+\begin{frame}{CUSTOM A* \& SAFE PROOF}
 \navslidetag[NavTeal]{ADMISSIBLE \& CONSISTENT}
 \framesubtitle{Keyed $f(n)=g(n)+h(n)$ search with global speed bound $V_{\mathrm{upper}}$ and exhaustive edge-bound verification}
-\vspace{0.06cm}
+\vspace{0.05cm}
 \begin{columns}[T,onlytextwidth]
   \begin{column}{7.85cm}
-    \navcard[inner sep=7.5pt]{7.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}SAFE HEURISTIC BOUND \& CONSISTENCY PROOF}\\[3pt]
-      {\fontsize{8.1}{10.8}\selectfont\color{NavIvory}%
+    \navcard[inner sep=7pt]{7.15cm}{%
+      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}SAFE HEURISTIC BOUND \& CONSISTENCY PROOF}\\[2pt]
+      {\fontsize{7.8}{10.0}\selectfont\color{NavIvory}%
+        \setlength{\abovedisplayskip}{3pt}%
+        \setlength{\belowdisplayskip}{3pt}%
         \[
-          V_{\mathrm{upper}}(S) = 1.001 \max_{e \in E} v_e(S) = \mathbf{74.074\;\mathrm{km/h}}, \quad
+          V_{\mathrm{upper}}(S) = 1.001 \max_{e \in E} v_e(S) = \mathbf{74.074\;\mathrm{km/h}}
+        \]
+        \[
           h_{\mathrm{safe}}(n,t;S) = \frac{3.6\,d_{\mathrm{hav}}(n,t)}{V_{\mathrm{upper}}(S)}
         \]
-        \textbf{Load-time edge check} ($\forall$ traversable $(u,v)$):
-        \[
-          c(u,v) \ge \frac{3.6\,d_{\mathrm{hav}}(u,v)}{V_{\mathrm{upper}}(S)}
-        \]
-        By great-circle triangle inequality:
-        \[
-          h_{\mathrm{safe}}(u,t) \le \frac{3.6\,d_{\mathrm{hav}}(u,v)}{V_{\mathrm{upper}}(S)} + h_{\mathrm{safe}}(v,t) \le c(u,v) + h_{\mathrm{safe}}(v,t)
-        \]
-        \centering\textbf{\color{NavTeal}Consistent $\Longrightarrow$ Admissible $\Longrightarrow$ Optimal A*}%
+        \textbf{Edge check} ($\forall\,(u,v)$): $c(u,v) \ge \dfrac{3.6\,d_{\mathrm{hav}}(u,v)}{V_{\mathrm{upper}}(S)}$\\[3pt]
+        \centering
+        \begin{tikzpicture}[x=1cm,y=1cm]
+          \tikzstyle{tnode}=[circle, draw=NavCyan, fill=NavPanelAlt, minimum size=0.46cm,
+                             inner sep=0pt, font=\fontsize{7.5}{8.5}\selectfont\bfseries, text=NavIvory]
+          \node[tnode] (u) at (0, 0.72) {$u$};
+          \node[tnode] (v) at (3.2, 0.72) {$v$};
+          \node[tnode, draw=NavTeal, text=NavTeal] (t) at (5.6, 0.12) {$t$};
+          \draw[NavCyan, line width=1.0pt, -{Stealth[length=1.8mm]}]
+            (u) -- node[above, font=\ttfamily\fontsize{6.6}{7.5}\selectfont, text=NavCyan] {c(u,v)} (v);
+          \draw[NavBorder!75, dashed, line width=0.85pt, -{Stealth[length=1.6mm]}]
+            (v) -- node[above right, font=\ttfamily\fontsize{6.5}{7.5}\selectfont, text=NavMuted] {h\_safe(v,t)} (t);
+          \draw[NavTeal, dashed, line width=0.85pt, -{Stealth[length=1.6mm]}]
+            (u) to[bend right=12] node[below, font=\ttfamily\fontsize{6.5}{7.5}\selectfont, text=NavTeal] {h\_safe(u,t)} (t);
+        \end{tikzpicture}\\[2pt]
+        \fontsize{7.5}{9.5}\selectfont
+        $h_{\mathrm{safe}}(u,t) \le \frac{3.6\,d(u,v)}{V_{\mathrm{upper}}} + h_{\mathrm{safe}}(v,t) \le c(u,v) + h_{\mathrm{safe}}(v,t)$\\[2pt]
+        \textbf{\color{NavTeal}Consistent $\Longrightarrow$ Admissible $\Longrightarrow$ Optimal A*}%
       }%
     }
   \end{column}
@@ -262,7 +271,7 @@
     }\par
     \vspace{0.12cm}
     \navcardaccent[6.5pt]{NavCyan}{5.25cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}CUSTOM A* IMPLEMENTATION}\\[3pt]
+      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCyan}CUSTOM A* ENGINE}\\[3pt]
       {\fontsize{7.9}{10.8}\selectfont\color{NavIvory}%
         \navcheck\ \ Min-heap $f(n)=g(n)+h(n)$\\
         \navcheck\ \ Keyed \texttt{(parent, key)} for parallel edges\\
@@ -274,104 +283,140 @@
 \end{columns}
 \end{frame}
 
-% SLIDE 05 — FIXING LOCAL TRAFFIC: EDGE-BASED LOOKAHEAD
-\begin{frame}{FIXING LOCAL TRAFFIC: EDGE-BASED LOOKAHEAD}
+% SLIDE 05 — EDGE-BASED LOCAL TRAFFIC
+\begin{frame}{EDGE-BASED LOCAL TRAFFIC}
 \navslidetag[NavTeal]{BEFORE VS AFTER}
 \framesubtitle{Replacing broken congestion scaling ($\beta=0.25$) with Bellman-consistent one-step edge lookahead}
-\vspace{0.06cm}
+\vspace{0.05cm}
 \begin{columns}[T,onlytextwidth]
   \begin{column}{6.85cm}
     \navcardaccent[6.5pt]{NavCrimson}{6.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCrimson}BEFORE $\cdot$ LEGACY MEAN-TRAFFIC ($\beta=0.25$)}\\[3pt]
-      {\fontsize{7.8}{10.5}\selectfont\color{NavIvory}%
-        $h_{\mathrm{traffic}}(n,t) = h_{\mathrm{safe}}(n,t)\,[1 + 0.25\,q_S(n)]$
-      }\\[4pt]
+      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavCrimson}BEFORE $\cdot$ LEGACY ($\beta=0.25$)}\\[3pt]
+      {\fontsize{8.0}{10.5}\selectfont\color{NavIvory}%
+        $h_{\mathrm{old}} = h_{\mathrm{safe}}(1 + 0.25\,q_S)$%
+      }\\[5pt]
       \centering
       \begin{tikzpicture}[x=1cm,y=1cm]
-        \node[circle, draw=NavCrimson, fill=NavPanelAlt, minimum size=0.52cm, font=\fontsize{8}{9}\selectfont\bfseries] (u) at (0.6,0.9) {$u$};
-        \node[circle, draw=NavTeal, fill=NavPanelAlt, minimum size=0.52cm, font=\fontsize{8}{9}\selectfont\bfseries] (t) at (4.4,0.9) {$t$};
-        \draw[NavCyan, line width=1pt, -{Stealth[length=1.8mm]}] (u) -- node[above, font=\ttfamily\fontsize{7}{8}\selectfont\bfseries] {c(u,t)=10.00\,s} (t);
-        \node[fill=NavPanelAlt, draw=NavCrimson!45, rounded corners=3pt, inner sep=3pt, align=left,
+        \node[circle, draw=NavCrimson, fill=NavPanelAlt, minimum size=0.52cm, font=\fontsize{8}{9}\selectfont\bfseries] (u) at (0.6,0.95) {$u$};
+        \node[circle, draw=NavTeal, fill=NavPanelAlt, minimum size=0.52cm, font=\fontsize{8}{9}\selectfont\bfseries] (t) at (4.4,0.95) {$t$};
+        \draw[NavCyan, line width=1pt, -{Stealth[length=1.8mm]}] (u) -- node[above, font=\ttfamily\fontsize{7}{8}\selectfont\bfseries] {c=10.00\,s} (t);
+        \node[fill=NavPanelAlt, draw=NavCrimson!45, rounded corners=3pt, inner sep=3.5pt,
               font=\ttfamily\fontsize{6.6}{8.4}\selectfont, text=NavIvory] at (2.5,0.12) {%
-          h\_safe=9.99\,s, q\_S=0.50 $\Rightarrow$ \color{NavCrimson}\bfseries 11.24\,s > 10.00\,s \navcross%
+          h\_safe=9.99\,s $\Rightarrow$ \color{NavCrimson}\bfseries 11.24\,s > 10.00\,s \navcross%
         };
-      \end{tikzpicture}\\[3pt]
-      \raggedright{\fontsize{7.8}{10.5}\selectfont\color{NavIvory}%
-        $\bullet$ \textbf{\color{NavCrimson}115,612} consistency violations (12 goals)\\
-        $\bullet$ Max excess \textbf{158.72\,s} (POI 29); breaks optimality%
+      \end{tikzpicture}\\[5pt]
+      \raggedright{\fontsize{7.9}{10.5}\selectfont\color{NavIvory}%
+        $\bullet$ \textbf{\color{NavCrimson}115,612} cons. violations (max \textbf{+158.7\,s})%
       }%
     }
   \end{column}
   \begin{column}{6.85cm}
     \navcardaccent[6.5pt]{NavTeal}{6.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavTeal}AFTER $\cdot$ EDGE-BASED LOOKAHEAD ($h_{\mathrm{edge}}$)}\\[3pt]
-      {\fontsize{7.8}{10.5}\selectfont\color{NavIvory}%
-        \[
-          h_{\mathrm{edge}}(n,t) = \begin{cases}
-            0, & n = t \\
-            h_{\mathrm{safe}}(n,t), & \text{dead end} \\
-            \min_{e=(n,v)} \bigl[c_S(e) + h_{\mathrm{safe}}(v,t)\bigr], & \text{otherwise}
-          \end{cases}
-        \]
-        \textbf{Bellman + Safe consistency proof:}\\
-        $h_{\mathrm{edge}}(u,t) \le c_S(u,v) + h_{\mathrm{safe}}(v,t) \le c_S(u,v) + h_{\mathrm{edge}}(v,t)$\\[2pt]
-        \navcheck\ \ $h_{\mathrm{safe}} \le h_{\mathrm{edge}} \le h^*$ \textbf{(0 adm / 0 cons violations)}%
+      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavTeal}AFTER $\cdot$ 1-STEP LOOKAHEAD ($h_{\mathrm{edge}}$)}\\[3pt]
+      \centering
+      \begin{tikzpicture}[x=1cm,y=1cm]
+        \tikzstyle{lnode}=[circle, draw=NavBorder!70, fill=NavPanelAlt, minimum size=0.42cm, inner sep=0pt, font=\fontsize{7.2}{8}\selectfont\bfseries, text=NavIvory]
+        \node[lnode, draw=NavCyan, text=NavCyan] (n) at (0.35,0.95) {$n$};
+        \node[lnode] (v1) at (2.35,1.65) {$v_1$};
+        \node[lnode, draw=NavCrimson, text=NavCrimson] (v2) at (2.35,0.95) {$v_2$};
+        \node[lnode, draw=NavTeal, fill=NavTeal!12!white, text=NavTeal] (v3) at (2.35,0.25) {$v_3$};
+        \draw[NavMuted, line width=0.8pt, -{Stealth[length=1.5mm]}] (n) -- node[above left, font=\ttfamily\fontsize{6.2}{7}\selectfont] {37.5} (v1);
+        \draw[NavCrimson, line width=0.95pt, -{Stealth[length=1.5mm]}] (n) -- node[above, font=\ttfamily\fontsize{6.2}{7}\selectfont, text=NavCrimson] {150} (v2);
+        \draw[NavTeal, line width=1.15pt, -{Stealth[length=1.6mm]}] (n) -- node[below left, font=\ttfamily\fontsize{6.2}{7}\selectfont\bfseries, text=NavTeal] {50} (v3);
+        \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont, text=NavMuted] at (2.68,1.65) {+100 = 137.5s};
+        \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont, text=NavCrimson] at (2.68,0.95) {+40 = 190s (cong.)};
+        \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont\bfseries, text=NavTeal] at (2.68,0.25) {+60 = 110s \navcheck\ min};
+      \end{tikzpicture}\\[3pt]
+      \raggedright{\fontsize{7.7}{10.2}\selectfont\color{NavIvory}%
+        $h_{\mathrm{edge}}(n,t) = \min_{e=(n,v)}[c_S(e) + h_{\mathrm{safe}}(v,t)]$\\
+        {\fontsize{7.1}{9.0}\selectfont\color{NavMuted}(0 at goal $n=t$; $h_{\mathrm{safe}}$ at dead ends)}\\[2pt]
+        \navcheck\ \ $h_{\mathrm{safe}} \le h_{\mathrm{edge}} \le h^*$ (\textbf{\color{NavTeal}0/0 violations})%
       }%
     }
   \end{column}
 \end{columns}\par
-\vspace{0.10cm}
+\vspace{0.08cm}
 \navcardaccent[5.5pt]{NavCyan}{13.55cm}{%
   {\fontsize{8.0}{10.5}\selectfont\color{NavIvory}%
-    \textbf{\color{NavCyan}Key insight:} Taking $\min$ over actual outgoing edge costs $c_S(e)$ estimates remaining travel time without double-counting congestion.%
+    \textbf{\color{NavCyan}Key insight:} Min estimates remaining cost only — A* still explores all successors; no double congestion penalty.%
   }%
 }
 \end{frame}
 
-% SLIDE 06 — LANDMARK ACCELERATION: JOINT & SEPARATE ALT
-\begin{frame}{LANDMARK ACCELERATION: JOINT \& SEPARATE ALT}
+% SLIDE 06 — JOINT & SEPARATE ALT
+\begin{frame}{JOINT \& SEPARATE ALT}
 \navslidetag[NavViolet]{ALT $\cdot$ TRIANGLE INEQUALITY}
 \framesubtitle{Directed landmark lower bounds tighten $h$ from $0.533$ to $0.957$ while preserving exact optimality}
 \vspace{0.04cm}
 
 \navcardaccent[5pt]{NavBorder}{13.55cm}{%
-  {\fontsize{7.8}{10}\selectfont\color{NavIvory}%
-    \textbf{\color{NavCyan}Edge-Cost Decomposition:} \ $c_S(e) = c_{\mathrm{free}}(e) + c_{\mathrm{delay}}(e)$, \ where \ $c_{\mathrm{free}}(e) = \min\!\left(c_S(e),\;\frac{3.6\,L_e}{v_{\mathrm{free}}(e)}\right)$ \ and \ $c_{\mathrm{delay}}(e) = c_S(e) - c_{\mathrm{free}}(e) \ge 0$.%
-  }%
+  \centering
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \useasboundingbox (0,0) rectangle (13.3,0.72);
+    \fill[NavCyan!85, rounded corners=2pt] (0.1,0.34) rectangle (8.3,0.68);
+    \fill[NavAmber!85, rounded corners=2pt] (8.34,0.34) rectangle (11.5,0.68);
+    \node[font=\ttfamily\fontsize{6.8}{7.8}\selectfont\bfseries, text=white] at (4.2,0.51)
+      {c\_free = min(c\_S, 3.6 L / v\_free)};
+    \node[font=\ttfamily\fontsize{6.8}{7.8}\selectfont\bfseries, text=white] at (9.92,0.51)
+      {c\_delay (>= 0)};
+    \node[anchor=west, font=\ttfamily\fontsize{7.4}{8.5}\selectfont\bfseries, text=NavIvory] at (11.65,0.51)
+      {= c\_S(e)};
+    \node[anchor=west, font=\fontsize{7.2}{8.5}\selectfont, text=NavMuted] at (0.1,0.12)
+      {Additive edge-cost decomposition ($c_S = c_{\mathrm{free}} + c_{\mathrm{delay}}$) enables both Joint and Separate ALT bounds.};
+  \end{tikzpicture}%
 }\par
-\vspace{0.10cm}
+\vspace{0.08cm}
 
 \begin{columns}[T,onlytextwidth]
-  \begin{column}{6.85cm}
-    \navcardaccent[6.5pt]{NavViolet}{6.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavViolet}JOINT ALT (DIRECT $c_S$ BOUND)}\\[2pt]
-      {\fontsize{7.8}{10.4}\selectfont\color{NavIvory}%
-        \[
-          h_{\mathrm{joint}}(n,t) = \max_{\ell \in L}\max\bigl(d_S(\ell,t)-d_S(\ell,n),\; d_S(n,\ell)-d_S(t,\ell),\; 0\bigr)
-        \]
-        $\bullet$ Combined with $h_{\mathrm{safe}}$; single distance table per landmark\\
-        $\bullet$ \textbf{\color{NavViolet}Half the cache} (\texttt{26.6\,KB}) \& tighter on 95.0\% of pairs%
+  \begin{column}{4.4cm}
+    \navcardaccent[6pt]{NavViolet}{3.85cm}{%
+      {\ttfamily\fontsize{6.8}{8.0}\selectfont\bfseries\color{NavViolet}JOINT ALT}\\[2pt]
+      {\fontsize{7.3}{9.6}\selectfont\color{NavIvory}%
+        $\bullet$ 1 weight model ($c_S$)\\[2pt]
+        $h_{\mathrm{joint}}(n,t) = \max_{\ell \in L}\max\bigl($\\
+        \hspace*{2pt}$d_S(\ell,t)-d_S(\ell,n),\;d_S(n,\ell)-d_S(t,\ell),\;0\bigr)$\\[3pt]
+        $\bullet$ \textbf{\color{NavViolet}26.6\,KB} cache\\
+        $\bullet$ \textbf{Strictly independent of Safe}%
       }%
     }
   \end{column}
-  \begin{column}{6.85cm}
-    \navcardaccent[6.5pt]{NavIndigo}{6.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavIndigo}SEPARATE DELAY ALT (DECOMPOSED)}\\[2pt]
-      {\fontsize{7.8}{10.4}\selectfont\color{NavIvory}%
-        \[
-          h_{\mathrm{sep}}(n,t) = h_{\mathrm{free}}(n,t) + h_{\mathrm{delay}}(n,t)
-        \]
-        $\bullet$ Independent ALT bounds on $c_{\mathrm{free}}$ and $c_{\mathrm{delay}}$\\
-        $\bullet$ \textbf{\color{NavIndigo}Dual tables} (\texttt{53.0\,KB}); isolates congestion delay bound%
+  \begin{column}{4.8cm}
+    \navcard[inner sep=5pt]{4.35cm}{%
+      \centering
+      \begin{tikzpicture}[x=1cm,y=1cm]
+        \useasboundingbox (-0.1,0) rectangle (4.2,2.55);
+        \tikzstyle{anode}=[circle, draw=NavBorder!75, fill=NavPanelAlt, minimum size=0.46cm, inner sep=0pt, font=\fontsize{7.5}{8.5}\selectfont\bfseries, text=NavIvory]
+        \node[anode, draw=NavAmber, fill=NavAmber!15!white, text=NavAmber] (L) at (2.05,2.15) {$L$};
+        \node[anchor=south, font=\ttfamily\fontsize{5.8}{6.8}\selectfont\bfseries, text=NavAmber] at (2.05,2.38) {Tan Son Nhat};
+        \node[anode, draw=NavCyan, text=NavCyan] (n) at (0.45,0.45) {$n$};
+        \node[anode, draw=NavTeal, text=NavTeal] (t) at (3.65,0.45) {$t$};
+        \draw[NavViolet, line width=0.9pt, -{Stealth[length=1.6mm]}] (L) to[bend right=12] node[left, font=\ttfamily\fontsize{6.0}{7}\selectfont, text=NavViolet] {d(L,n)} (n);
+        \draw[NavViolet, line width=0.9pt, -{Stealth[length=1.6mm]}] (L) to[bend left=12] node[right, font=\ttfamily\fontsize{6.0}{7}\selectfont, text=NavViolet] {d(L,t)} (t);
+        \draw[NavIndigo, dashed, line width=0.85pt, -{Stealth[length=1.5mm]}] (n) to[bend left=10] (L);
+        \draw[NavIndigo, dashed, line width=0.85pt, -{Stealth[length=1.5mm]}] (t) to[bend right=10] (L);
+        \node[font=\ttfamily\fontsize{5.9}{7}\selectfont, text=NavMuted] at (2.05,0.95) {Fwd: d(L,t)-d(L,n)};
+        \node[font=\ttfamily\fontsize{5.9}{7}\selectfont, text=NavIndigo] at (2.05,0.62) {Rev: d(n,L)-d(t,L)};
+        \draw[NavBorder!50, dotted, line width=0.8pt, -{Stealth[length=1.4mm]}] (n) -- (t);
+      \end{tikzpicture}%
+    }
+  \end{column}
+  \begin{column}{4.4cm}
+    \navcardaccent[6pt]{NavIndigo}{3.85cm}{%
+      {\ttfamily\fontsize{6.8}{8.0}\selectfont\bfseries\color{NavIndigo}SEPARATE ALT}\\[2pt]
+      {\fontsize{7.3}{9.6}\selectfont\color{NavIvory}%
+        $\bullet$ 2 models ($c_{\mathrm{free}}$, $c_{\mathrm{delay}}$)\\[2pt]
+        $h_{\mathrm{sep}}(n,t) = h_{\mathrm{free}}(n,t) + h_{\mathrm{delay}}(n,t)$\\[4pt]
+        $\bullet$ \textbf{\color{NavIndigo}53.0\,KB} dual tables\\
+        $\bullet$ Isolates delay bound; independent of Safe%
       }%
     }
   \end{column}
 \end{columns}\par
-\vspace{0.10cm}
+\vspace{0.08cm}
 
-\navcardaccent[5.5pt]{NavCyan}{13.55cm}{%
-  {\fontsize{7.8}{10.4}\selectfont\color{NavIvory}%
-    \textbf{\color{NavCyan}Directed Safety \& Custom Landmarks:} Unreachable distances use finite caps $M_F, M_R$ (no $\infty - \infty$); defaults to Tan Son Nhat Airport or \textbf{1--32 custom} / \textbf{4, 8, 16, 32 auto} landmarks with \textbf{SHA-256 LRU cache}.%
+\navcardaccent[5pt]{NavCyan}{13.55cm}{%
+  {\fontsize{7.6}{10.0}\selectfont\color{NavIvory}%
+    \textbf{\color{NavCyan}Directed safety:} Finite caps $M_F, M_R$ avoid $\infty-\infty$ $\cdot$ Default: Tan Son Nhat Airport (or 1--32 custom / 4--32 auto) $\cdot$ SHA-256 LRU cache.%
   }%
 }
 \end{frame}
@@ -382,28 +427,25 @@
 \navsetsection{3}{03 / EXPERIMENTAL RESULTS}
 \navgridoff
 
-% SLIDE 07 — FULL HCMC GRAPH: SAFE CUTS EXPANSIONS 46.1%
-\begin{frame}{FULL HCMC GRAPH: SAFE CUTS EXPANSIONS 46.1\%}
+% SLIDE 07 — FULL HCMC GRAPH: -46.1% NODES
+\begin{frame}{FULL HCMC GRAPH: -46.1\% NODES}
 \navslidetag[NavCyan]{SCOPE A $\cdot$ 44.2K NODES}
 \framesubtitle{Archived v0.3.0 evaluation (seed 42, 20 pairs, 12 goals, weekday 08:00--08:29): all 20/20 match Dijkstra}
-\vspace{0.06cm}
+\vspace{0.05cm}
 \begin{columns}[T,onlytextwidth]
   \begin{column}{4.85cm}
-    \vspace{0.04cm}
     \navhero[NavCyan]{36}{46.1\%}\par
-    \vspace{2pt}
-    {\fontsize{9.4}{11.5}\selectfont\bfseries\color{NavAmber}FEWER EXPANDED NODES}\par
-    \vspace{2pt}
-    {\fontsize{8.3}{10.5}\selectfont\color{NavIvory}Safe A* vs Zero baseline}\par
-    \vspace{6pt}
+    \vspace{1pt}
+    {\fontsize{9.2}{11}\selectfont\bfseries\color{NavAmber}FEWER EXPANDED NODES}\par
+    \vspace{4pt}
     \navtag[NavTeal]{20/20 DIJKSTRA MATCHES}\par
-    \vspace{7pt}
-    \navcardaccent[6pt]{NavBorder}{4.3cm}{%
-      {\fontsize{7.6}{10.5}\selectfont\color{NavMuted}%
-        $\bullet$ \textbf{\color{NavIvory}Audit:} 12 goals $\times$ 44,022 reachable nodes (rev. Dijkstra)\\
-        $\bullet$ \textbf{\color{NavIvory}Tolerance:} $10^{-6}\text{ s}$\\
-        $\bullet$ \textbf{\color{NavAmber}POI 118$\to$138:} Legacy Traffic took \textbf{+2,345} extra nodes vs Safe (27,114 vs 24,769)%
-      }%
+    \vspace{6pt}
+    \navcardaccent[6pt]{NavBorder}{4.30cm}{%
+      {\ttfamily\fontsize{6.5}{7.5}\selectfont\bfseries\color{NavAmber}POI 118 $\to$ 138 CASE}\\[3pt]
+      \navbar{Zero}{1.20}{1.75}{1.000}{38.2k}{NavStone}\\[3pt]
+      \navbar{Legacy}{1.20}{1.75}{0.710}{27.1k}{NavAmber}\\[3pt]
+      \navbar{Safe}{1.20}{1.75}{0.649}{24.8k}{NavCyan}\\[3pt]
+      {\fontsize{7.2}{9.0}\selectfont\color{NavAmber}\textbf{+2,345} extra nodes in Legacy}%
     }
   \end{column}
   \begin{column}{8.95cm}
@@ -415,10 +457,10 @@
     }\par
     \vspace{0.10cm}
     \navcard[inner sep=5.5pt]{8.20cm}{%
-      \setlength{\tabcolsep}{4pt}%
-      \renewcommand{\arraystretch}{1.05}%
+      \setlength{\tabcolsep}{6pt}%
+      \renewcommand{\arraystretch}{1.08}%
       \fontsize{7.5}{9.0}\selectfont
-      \begin{tabular}{@{}>{\bfseries\color{NavIvory}}p{2.15cm}>{\centering\arraybackslash\color{NavIvory}}p{1.40cm}>{\centering\arraybackslash\color{NavIvory}}p{1.85cm}>{\color{NavMuted}}p{1.55cm}@{}}
+      \begin{tabular}{@{}>{\bfseries\color{NavIvory}}lccc@{}}
         \toprule
         \textbf{\color{NavMuted}Heuristic} & \textbf{\color{NavMuted}Adm. Viol.} & \textbf{\color{NavMuted}Cons. Viol.} & \textbf{\color{NavMuted}Guarantee} \\
         \midrule
@@ -428,111 +470,138 @@
         \bottomrule
       \end{tabular}%
     }\par
-    \vspace{0.06cm}
+    \vspace{0.05cm}
     {\fontsize{6.8}{8.5}\selectfont\color{NavMuted}*Scope A: Archived v0.3.0 full 44,178-node graph (\texttt{report/evaluation-summary.json}).}%
   \end{column}
 \end{columns}
 \end{frame}
 
-% SLIDE 08 — 5-METHOD BENCHMARK: EXPANSIONS & TIGHTNESS
-\begin{frame}{5-METHOD BENCHMARK: EXPANSIONS \& TIGHTNESS}
+% SLIDE 08 — 5-METHOD BENCHMARK RESULTS
+\begin{frame}{5-METHOD BENCHMARK RESULTS}
 \navslidetag[NavViolet]{SCOPE B $\cdot$ 150 HCMC PLACES}
-\framesubtitle{Controlled 5-method benchmark (150 nodes, 990 edges, 8 landmarks, seed 42, 20 pairs, 12 goals)}
+\framesubtitle{150 HCMC Places, 990 edges, 8 landmarks, seed 42 (20 pairs, 12 goals)}
 \vspace{0.05cm}
 \begin{columns}[T,onlytextwidth]
-  \begin{column}{4.35cm}
-    \navhero[NavViolet]{34}{-80.7\%}\par
+  \begin{column}{3.6cm}
+    \navhero[NavViolet]{32}{-80.7\%}\par
     \vspace{1pt}
-    {\fontsize{9.0}{11}\selectfont\bfseries\color{NavViolet}JOINT ALT EXPANSIONS}\par
-    \vspace{2pt}
-    {\fontsize{8.0}{10.2}\selectfont\color{NavIvory}14.80 vs 76.75 (Zero baseline)}\par
+    {\fontsize{8.5}{10.2}\selectfont\bfseries\color{NavViolet}Joint ALT vs Zero}\par
     \vspace{6pt}
-    \navcardaccent[6pt]{NavTeal}{3.80cm}{%
-      \navhero[NavTeal]{24}{0.957}\par
-      {\ttfamily\fontsize{6.6}{7.8}\selectfont\bfseries\color{NavTeal}MEAN TIGHTNESS ($h/h^*$)}\\[3pt]
-      {\fontsize{7.6}{10}\selectfont\color{NavIvory}%
-        \navcheck\ \ \textbf{0 / 0} adm. \& cons. violations across all 5 methods\\
-        \navcheck\ \ \textbf{20 / 20} exact Dijkstra matches (mean cost \texttt{1054.442\,s})%
+    \navhero[NavTeal]{28}{0.957}\par
+    \vspace{1pt}
+    {\fontsize{8.5}{10.2}\selectfont\bfseries\color{NavTeal}Peak Tightness}\par
+    \vspace{8pt}
+    \navcardaccent[6pt]{NavTeal}{3.05cm}{%
+      {\fontsize{7.5}{9.8}\selectfont\color{NavIvory}%
+        \navcheck\ \ \textbf{All 5 methods:}\\
+        0 Adm $\cdot$ 0 Cons\\
+        20/20 Dijkstra%
       }%
     }
   \end{column}
-  \begin{column}{9.45cm}
-    \navcard[inner sep=6pt]{8.75cm}{%
-      \navbar{Zero (Dijkstra)}{2.45}{4.20}{1.000}{76.75}{NavStone}\\[3.5pt]
-      \navbar{Safe A*}{2.45}{4.20}{0.571}{43.85}{NavCyan}\\[3.5pt]
-      \navbar{Edge-Local}{2.45}{4.20}{0.534}{40.95}{NavAmber}\\[3.5pt]
-      \navbar{Separate ALT}{2.45}{4.20}{0.334}{25.60}{NavIndigo}\\[3.5pt]
-      \navbar{Joint ALT}{2.45}{4.20}{0.193}{14.80}{NavViolet}%
-    }\par
-    \vspace{0.08cm}
-    \navcard[inner sep=5pt]{8.75cm}{%
-      \setlength{\tabcolsep}{3.5pt}%
-      \renewcommand{\arraystretch}{1.04}%
-      \fontsize{7.2}{8.6}\selectfont
-      \begin{tabular}{@{}>{\bfseries\color{NavIvory}}p{2.15cm}ccccc@{}}
-        \toprule
-        \textbf{\color{NavMuted}Method} & \textbf{\color{NavMuted}Mean Exp.} & \textbf{\color{NavMuted}vs Zero} & \textbf{\color{NavMuted}Query} & \textbf{\color{NavMuted}Tight.} & \textbf{\color{NavMuted}Viol. / Match} \\
-        \midrule
-        Zero & 76.75 & -- & 0.728\,ms & 0.0000 & \color{NavTeal}0/0 $\cdot$ 20/20 \\
-        Safe & 43.85 & $-$42.9\% & 0.571\,ms & 0.5334 & \color{NavTeal}0/0 $\cdot$ 20/20 \\
-        Edge-Local & 40.95 & $-$46.6\% & 1.718\,ms & 0.6056 & \color{NavTeal}0/0 $\cdot$ 20/20 \\
-        Separate ALT & 25.60 & $-$66.6\% & 0.601\,ms & 0.8016 & \color{NavTeal}0/0 $\cdot$ 20/20 \\
-        Joint ALT & \color{NavViolet}\textbf{14.80} & \color{NavViolet}\textbf{$-$80.7\%} & \color{NavTeal}\textbf{0.285\,ms} & \color{NavViolet}\textbf{0.9565} & \color{NavTeal}0/0 $\cdot$ 20/20 \\
-        \bottomrule
-      \end{tabular}%
-    }
-  \end{column}
-\end{columns}
-\end{frame}
+  \begin{column}{10.1cm}
+    \navcard[inner sep=6pt]{9.50cm}{%
+      \begin{tikzpicture}[x=1cm,y=1cm]
+        \useasboundingbox (0,0) rectangle (9.35,4.15);
+        % Column Headers
+        \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont\bfseries, text=NavMuted] at (0,3.92) {METHOD};
+        \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont\bfseries, text=NavMuted] at (2.15,3.92) {MEAN EXPANDED NODES};
+        \node[anchor=west, font=\ttfamily\fontsize{6.4}{7.5}\selectfont\bfseries, text=NavMuted] at (5.55,3.92) {TIGHTNESS h/h*};
+        \node[anchor=east, font=\ttfamily\fontsize{6.4}{7.5}\selectfont\bfseries, text=NavMuted] at (9.30,3.92) {QUERY ms};
+        \draw[NavBorder!30, line width=0.5pt] (0,3.72) -- (9.30,3.72);
 
-% SLIDE 09 — COMPUTATIONAL TRADE-OFFS: QUERY VS OVERHEAD
-\begin{frame}{COMPUTATIONAL TRADE-OFFS: QUERY VS OVERHEAD}
-\navslidetag[NavAmber]{PLACES + GRID BENCHMARKS}
-\framesubtitle{Tighter bounds do not always mean faster queries: outgoing-edge scans vs precomputed ALT tables}
-\vspace{0.06cm}
-\begin{columns}[T,onlytextwidth]
-  \begin{column}{6.85cm}
-    \navcardaccent[6.5pt]{NavAmber}{6.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavAmber}EDGE-LOCAL VS SAFE A*}\\[4pt]
-      {\fontsize{8.0}{11}\selectfont\color{NavIvory}%
-        $\bullet$ \textbf{Fewer nodes:} \textbf{$-$6.6\%} on Places (\texttt{40.95} vs \texttt{43.85}) and \textbf{$-$15.3\%} on 144-Grid (\texttt{38.80} vs \texttt{45.80}); \textbf{0} Safe-dominance violations.\\[3pt]
-        $\bullet$ \textbf{\color{NavAmber}Slower query:} \texttt{1.718\,ms} vs \texttt{0.571\,ms} (Places) and \texttt{0.894\,ms} vs \texttt{0.424\,ms} (Grid) due to per-expansion outgoing-edge scan (\texttt{1.301\,ms} heur vs \texttt{0.146\,ms}).%
-      }%
-    }
-  \end{column}
-  \begin{column}{6.85cm}
-    \navcardaccent[6.5pt]{NavViolet}{6.15cm}{%
-      {\ttfamily\fontsize{7.0}{8.2}\selectfont\bfseries\color{NavViolet}JOINT ALT VS SEPARATE ALT}\\[4pt]
-      {\fontsize{8.0}{11}\selectfont\color{NavIvory}%
-        $\bullet$ \textbf{Tightness (Places, 1,788 pairs):} Joint > Sep \textbf{\color{NavViolet}95.0\%} (\texttt{1,699}), Sep > Joint \texttt{2.7\%} (\texttt{49}), Equal \texttt{2.2\%} (\texttt{40}).\\[2pt]
-        $\bullet$ \textbf{Tightness (Grid, 1,716 pairs):} Joint > Sep \textbf{\color{NavViolet}63.3\%} (\texttt{1,087}), Sep > Joint \texttt{8.9\%} (\texttt{152}), Equal \texttt{27.8\%} (\texttt{477}).\\[2pt]
-        $\bullet$ \textbf{Preprocess \& Cache:} Joint \texttt{17.5\,ms / 26.6\,KB} vs Separate \texttt{27.8\,ms / 53.0\,KB} (Places).%
-      }%
+        % Rows: Zero, Safe, Edge-Local, Separate ALT, Joint ALT
+        \foreach \name/\nodes/\nfrac/\tight/\tightf/\qms/\col/\ry in {
+          Zero/{76.75}/1.000/{0.000}/0.000/{0.73}/NavStone/3.22,
+          Safe/{43.85}/0.571/{0.533}/0.533/{0.57}/NavCyan/2.48,
+          Edge-Local/{40.95}/0.534/{0.606}/0.606/{1.72}/NavAmber/1.74,
+          Separate ALT/{25.60}/0.334/{0.802}/0.802/{0.60}/NavIndigo/1.00,
+          Joint ALT/{14.80}/0.193/{0.957}/0.957/{0.29}/NavViolet/0.26%
+        } {
+          \node[anchor=west, font=\fontsize{8.0}{9.2}\selectfont\bfseries, text=NavIvory] at (0,\ry) {\name};
+          % Left bar (max 2.35cm)
+          \fill[NavTrack, rounded corners=1.8pt] (2.15,\ry-0.12) rectangle (4.50,\ry+0.12);
+          \fill[\col, rounded corners=1.8pt] (2.15,\ry-0.12) rectangle ({2.15 + max(0.06, 2.35*\nfrac)},\ry+0.12);
+          \node[anchor=west, font=\ttfamily\fontsize{7.5}{8.5}\selectfont\bfseries, text=\col] at (4.58,\ry) {\nodes};
+          % Right bar (max 1.85cm)
+          \fill[NavTrack, rounded corners=1.8pt] (5.55,\ry-0.12) rectangle (7.40,\ry+0.12);
+          \pgfmathparse{\tightf>0.01 ? 1 : 0}
+          \ifnum\pgfmathresult=1
+            \fill[\col, rounded corners=1.8pt] (5.55,\ry-0.12) rectangle ({5.55 + 1.85*\tightf},\ry+0.12);
+          \fi
+          \node[anchor=west, font=\ttfamily\fontsize{7.5}{8.5}\selectfont\bfseries, text=\col] at (7.48,\ry) {\tight};
+          % Query ms
+          \node[anchor=east, font=\ttfamily\fontsize{7.8}{8.8}\selectfont\bfseries, text=NavIvory] at (9.30,\ry) {\qms};
+        }
+      \end{tikzpicture}%
     }
   \end{column}
 \end{columns}\par
-\vspace{0.12cm}
-\navcardaccent[6pt]{NavTeal}{13.55cm}{%
-  {\fontsize{8.0}{10.8}\selectfont\color{NavIvory}%
-    \textbf{\color{NavTeal}Practical Selection:} Use \textbf{Safe A*} for zero preprocessing or FIFO time-routing; \textbf{Joint ALT} for fastest static queries (\texttt{0.285\,ms}) \& smallest cache; \textbf{Separate ALT} to isolate free-flow vs delay bounds.%
+\vspace{0.10cm}
+\navcardaccent[5pt]{NavCyan}{13.55cm}{%
+  {\fontsize{7.9}{10.2}\selectfont\color{NavIvory}%
+    Higher tightness cuts expansions steadily — except \textbf{\color{NavAmber}Edge-Local} trades scan time (\texttt{1.72\,ms}) for fewer nodes.%
   }%
 }
 \end{frame}
 
-% SLIDE 10 — INTERACTIVE MAP UI & ROUTE CASE STUDY
-\begin{frame}{INTERACTIVE MAP UI \& ROUTE CASE STUDY}
+% SLIDE 09 — QUERY VS OVERHEAD TRADE-OFFS
+\begin{frame}{QUERY VS OVERHEAD TRADE-OFFS}
+\navslidetag[NavAmber]{PLACES + GRID BENCHMARKS}
+\framesubtitle{Tighter bounds do not always mean faster queries: outgoing-edge scans vs precomputed ALT tables}
+\vspace{0.05cm}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{6.85cm}
+    \navcardaccent[6pt]{NavAmber}{6.20cm}{%
+      {\ttfamily\fontsize{6.9}{8.0}\selectfont\bfseries\color{NavAmber}QUERY TIME BREAKDOWN (150-PLACE)}\\[5pt]
+      \navstacktwo{Safe}{1.55}{2.75}{0.081}{0.236}{NavAmber}{NavCyan}{0.57 ms}\\[4pt]
+      \navstacktwo{Edge-Local}{1.55}{2.75}{0.723}{0.232}{NavAmber}{NavCyan}{1.72 ms}\\[2pt]
+      {\hspace*{1.70cm}\ttfamily\fontsize{6.3}{7.5}\selectfont\color{NavAmber}$\uparrow$ 76\% spent scanning outgoing edges!}\\[4pt]
+      \navstacktwo{Sep. ALT}{1.55}{2.75}{0.183}{0.151}{NavAmber}{NavCyan}{0.60 ms}\\[4pt]
+      \navstacktwo{Joint ALT}{1.55}{2.75}{0.067}{0.092}{NavAmber}{NavCyan}{0.29 ms}\\[6pt]
+      {\fontsize{7.2}{9.0}\selectfont\color{NavMuted}%
+        \textcolor{NavAmber}{$\blacksquare$} Heuristic ms \quad \textcolor{NavCyan}{$\blacksquare$} Search Loop ms%
+      }\\[3pt]
+      {\fontsize{7.4}{9.4}\selectfont\color{NavIvory}%
+        Tighter (\textbf{-6.6\%} Places / \textbf{-15.3\%} Grid) does not guarantee faster runtime.%
+      }%
+    }
+  \end{column}
+  \begin{column}{6.85cm}
+    \navcardaccent[6pt]{NavViolet}{6.20cm}{%
+      {\ttfamily\fontsize{6.9}{8.0}\selectfont\bfseries\color{NavViolet}JOINT VS SEPARATE ALT DOMINANCE}\\[5pt]
+      \navstackthree{150 HCMC Places (1,788 pairs)}{5.6}{0.950}{0.022}{0.027}{NavViolet}{NavTrack!70!NavStone}{NavIndigo}{95.0\%}\\[5pt]
+      \navstackthree{144-Node Grid (1,716 pairs)}{5.6}{0.633}{0.278}{0.089}{NavViolet}{NavTrack!70!NavStone}{NavIndigo}{63.3\%}\\[6pt]
+      {\fontsize{7.2}{9.0}\selectfont\color{NavMuted}%
+        \textcolor{NavViolet}{$\blacksquare$} Joint $>$ Sep \quad \textcolor{NavStone}{$\blacksquare$} Equal \quad \textcolor{NavIndigo}{$\blacksquare$} Sep $>$ Joint%
+      }\\[6pt]
+      \navkpi[NavViolet]{2.70cm}{17.5 ms · 26.6 KB}{Joint ALT prep/cache}\hfill
+      \navkpi[NavIndigo]{2.70cm}{27.8 ms · 53.0 KB}{Separate ALT · 2x tables}%
+    }
+  \end{column}
+\end{columns}\par
+\vspace{0.10cm}
+\navcardaccent[5pt]{NavTeal}{13.55cm}{%
+  {\fontsize{7.9}{10.2}\selectfont\color{NavIvory}%
+    \textbf{\color{NavTeal}Guide:} \textbf{Safe} (0 prep / FIFO) $\cdot$ \textbf{Joint ALT} (fastest static \texttt{0.29\,ms}) $\cdot$ \textbf{Separate ALT} (delay isolation).%
+  }%
+}
+\end{frame}
+
+% SLIDE 10 — INTERACTIVE UI & CASE STUDY
+\begin{frame}{INTERACTIVE UI \& CASE STUDY}
 \navslidetag[NavCyan]{WEB UI $\cdot$ POI 132 $\to$ 121}
 \framesubtitle{Archived full-graph case study (Bách Hóa Xanh $\to$ Bến Thủ Thiêm) + upgraded 5-method MapLibre UI}
 \vspace{0.06cm}
 \begin{columns}[T,onlytextwidth]
-  \begin{column}{8.20cm}
+  \begin{column}{8.05cm}
     \begin{tikzpicture}[x=1cm,y=1cm]
       \node[anchor=south west, inner sep=1pt, draw=NavBorder!55, line width=0.8pt,
             fill=NavPanel, rounded corners=4pt] (shot) at (0,0)
-        {\includegraphics[width=7.90cm]{images/qa_1.png}};
+        {\includegraphics[width=7.85cm]{images/qa_1.png}};
       \node[anchor=south, inner sep=2pt, draw=NavCyan, line width=1.1pt,
-            fill=white, rounded corners=4pt] (loupe) at (4.95,0.12)
-        {\includegraphics[width=2.65cm]{images/qa_safe_zoom.png}};
+            fill=white, rounded corners=4pt] (loupe) at (4.90,0.12)
+        {\includegraphics[width=2.60cm]{images/qa_safe_zoom.png}};
       \node[anchor=south east, fill=NavCyan, draw=NavCyan, line width=0.6pt,
             rounded corners=2pt, inner xsep=4pt, inner ysep=1.5pt,
             font=\ttfamily\fontsize{5.5}{6.5}\selectfont\bfseries, text=white]
@@ -541,25 +610,22 @@
         (2.10,0.85) -- (loupe.west);
     \end{tikzpicture}
   \end{column}
-  \begin{column}{5.70cm}
-    \navcardaccent[5pt]{NavCyan}{5.05cm}{%
-      {\ttfamily\fontsize{6.6}{7.8}\selectfont\bfseries\color{NavCyan}ARCHIVED CASE STUDY (SAFE VS LEGACY)}\\[1.5pt]
-      {\fontsize{7.8}{10.2}\selectfont\color{NavIvory}%
-        \textbf{Safe:} \texttt{19,003} nodes (\texttt{195.4\,ms*}) $\cdot$ \textbf{14.1\,km} (\texttt{14.094\,km}) $\cdot$ \textbf{33m\,19s} (\texttt{1,999.363\,s}) $\cdot$ \texttt{176} edges $\cdot$ Matches Dijkstra\\[2pt]
-        \textbf{Legacy Traffic:} \texttt{19,857} nodes (\textbf{+4.49\%}, \texttt{373.4\,ms*})%
-      }%
-    }\par\vspace{5pt}
-    \navcardaccent[5pt]{NavViolet}{5.05cm}{%
-      {\ttfamily\fontsize{6.6}{7.8}\selectfont\bfseries\color{NavViolet}UPGRADED REACT + MAPLIBRE UI}\\[1.5pt]
+  \begin{column}{5.85cm}
+    \navcardaccent[6pt]{NavCyan}{5.20cm}{%
+      {\ttfamily\fontsize{6.6}{7.8}\selectfont\bfseries\color{NavCyan}POI 132 $\to$ 121 (ARCHIVED FULL GRAPH)}\\[5pt]
+      \navkpi[NavCyan]{2.40cm}{14.1 km}{14.094\,km}\hfill
+      \navkpi[NavTeal]{2.40cm}{33m 19s}{176 edges}\\[5pt]
+      \navkpi[NavCyan]{2.40cm}{19,003}{Safe nodes · 195\,ms*}\hfill
+      \navkpi[NavAmber]{2.40cm}{+4.49\%}{Legacy 19,857 · 373\,ms*}%
+    }\par\vspace{6pt}
+    \navcardaccent[6pt]{NavViolet}{5.20cm}{%
+      {\ttfamily\fontsize{6.6}{7.8}\selectfont\bfseries\color{NavViolet}UPGRADED 5-METHOD MAPLIBRE UI}\\[3pt]
       {\fontsize{7.6}{10.2}\selectfont\color{NavIvory}%
-        $\bullet$ Supports all \textbf{5 verified heuristics}\\
-        $\bullet$ \textbf{Custom Landmarks} (click map / presets, 1--32)\\
-        $\bullet$ \texttt{--demo} mode for interactive benchmark exploration%
+        $\bullet$ All \textbf{5 verified heuristics} + compare\\
+        $\bullet$ \textbf{Custom Landmarks:} Airport / 1--32\\
+        $\bullet$ \texttt{--demo} mode (simulated 150 places)\\[4pt]
+        {\fontsize{6.9}{8.8}\selectfont\color{NavMuted}*Single-run UI capture; legacy ``Real-time'' badge on frozen data.}%
       }%
-    }\par\vspace{5pt}
-    \navcardaccent[5pt]{NavMuted}{5.05cm}{%
-      {\ttfamily\fontsize{6.4}{7.4}\selectfont\bfseries\color{NavMuted}TRANSPARENCY NOTE}\\[1.5pt]
-      {\fontsize{7.1}{9.3}\selectfont\color{NavMuted}*Screenshot is from archived v0.3.0 full-graph UI (single run). \texttt{--demo} mode uses simulated fixtures, separate from the 44.2k graph.}%
     }
   \end{column}
 \end{columns}
@@ -571,22 +637,22 @@
 \navsetsection{4}{04 / LIMITATIONS \& CONCLUSIONS}
 \navgridoff
 
-% SLIDE 11 — LIMITATIONS AND FUTURE WORKS
-\begin{frame}{LIMITATIONS AND FUTURE WORKS}
+% SLIDE 11 — LIMITATIONS & FUTURE WORKS
+\begin{frame}{LIMITATIONS \& FUTURE WORKS}
 \navslidetag[NavAmber]{HONEST ASSESSMENT}
 \framesubtitle{Core theoretical gaps from v0.3.0 are resolved; remaining gaps stem from benchmark scope and static snapshots}
-\vspace{0.05cm}
+\vspace{0.04cm}
 
 \noindent\begin{tikzpicture}[x=1cm,y=1cm]
-  \useasboundingbox (0,0.45) rectangle (14.3,4.42);
-  \navlimpair{3.92}{5-method benchmarks run on 150-place \& 144-grid fixtures}{Re-run full 5-method suite on 44,178-node HCMC graph}
-  \navlimpair{2.94}{ALT \& Edge-Local require frozen static snapshots}{Time-dependent ALT \& dynamic landmark updates}
-  \navlimpair{1.96}{Edge-Local scan overhead \& partial Kaggle coverage}{Cached edge-lookahead bounds \& richer map-matching}
-  \navlimpair{0.98}{Single-run timings \& excluded POI snap access legs}{Median/IQR repeated trials \& integrated first/last-mile cost}
+  \useasboundingbox (0,0.45) rectangle (14.3,4.50);
+  \navlimpair{4.05}{5-method runs on 150-place \& 144-grid fixtures}{Re-run full 5-method suite on 44.2k HCMC graph}
+  \navlimpair{3.00}{ALT \& Edge-Local require frozen snapshots}{Time-dependent ALT \& dynamic landmark tables}
+  \navlimpair{1.95}{Edge-Local scan cost \& partial Kaggle match}{Cached edge bounds \& richer map-matching}
+  \navlimpair{0.90}{Single-run timings \& excluded POI snap legs}{Median/IQR trials \& integrated access legs}
 \end{tikzpicture}\par
 \vspace{0.04cm}
-\navcardaccent[5.5pt]{NavTeal}{13.55cm}{%
-  {\fontsize{7.9}{10.2}\selectfont\color{NavIvory}\textbf{\color{NavTeal}Resolved since v0.3.0:} Legacy Traffic non-admissibility, missing ALT bounds, and static-only routing are now resolved by Edge-Local, Joint/Separate ALT, and FIFO time-routing.}%
+\navcardaccent[5pt]{NavTeal}{13.55cm}{%
+  {\fontsize{7.8}{10.0}\selectfont\color{NavIvory}\textbf{\color{NavTeal}Resolved since v0.3.0:} Edge-Local fixes legacy Traffic; ALT \& FIFO time-routing are now implemented.}%
 }
 \end{frame}
 
@@ -608,7 +674,7 @@
     \navcard[inner sep=7.5pt]{3.95cm}{%
       \navhero[NavTeal]{28}{5 / 5}\\[4pt]
       {\fontsize{9.0}{11.2}\selectfont\bfseries\color{NavIvory}Verified Heuristics}\\[3pt]
-      {\fontsize{7.7}{10.2}\selectfont\color{NavMuted}Zero, Safe, Edge-Local, Sep \& Joint ALT: all 0/0 viol., 20/20 Dijkstra, 44 tests}\\[6pt]
+      {\fontsize{7.7}{10.2}\selectfont\color{NavMuted}Zero, Safe, Edge-Local, Sep \& Joint ALT: 0/0 viol., 20/20 Dijkstra, 44 tests}\\[6pt]
       {\tikz\draw[NavTeal, line width=1.6pt] (0,0) -- (3.6,0);}%
     }
   \end{column}
@@ -616,14 +682,14 @@
     \navcard[inner sep=7.5pt]{3.95cm}{%
       \navhero[NavViolet]{28}{0.957}\\[4pt]
       {\fontsize{9.0}{11.2}\selectfont\bfseries\color{NavIvory}Joint ALT Tightness}\\[3pt]
-      {\fontsize{7.7}{10.2}\selectfont\color{NavMuted}$-$80.7\% expansions (14.80 vs 76.75), 0.285\,ms query, 26.6\,KB cache (Places)}\\[6pt]
+      {\fontsize{7.7}{10.2}\selectfont\color{NavMuted}$-$80.7\% nodes (14.80 vs 76.75), 0.285\,ms query, 26.6\,KB cache (Places)}\\[6pt]
       {\tikz\draw[NavViolet, line width=1.6pt] (0,0) -- (3.6,0);}%
     }
   \end{column}
 \end{columns}\par
 \vspace{0.16cm}
 \navcardaccent[6pt]{NavBorder}{13.55cm}{%
-  {\centering\fontsize{8.3}{10.8}\selectfont\color{NavIvory}Every heuristic in the upgraded engine is mathematically proven admissible \& consistent and verified against Dijkstra.\par}%
+  {\centering\fontsize{8.3}{10.8}\selectfont\color{NavIvory}Every heuristic in the upgraded engine is proven admissible \& consistent and verified against Dijkstra.\par}%
 }
 \vspace{0.18cm}
 \noindent\begin{minipage}{\textwidth}
@@ -638,8 +704,8 @@
 % ======================================================================
 \navstartappendix
 
-% Q1 — TRAFFIC COST MODEL, DATA CLEANING & 5-TIER FALLBACK
-\begin{frame}{TRAFFIC COST MODEL \& 5-TIER FALLBACK}
+% Q1 — TRAFFIC COST & 5-TIER FALLBACK
+\begin{frame}{TRAFFIC COST \& 5-TIER FALLBACK}
 \navslidetag[NavAmber]{Q\&A BACKUP $\cdot$ Q1}
 \framesubtitle{Deriving directed edge travel times from Kaggle historical observations and OSM road classes}
 \vspace{0.10cm}
@@ -674,8 +740,8 @@
 }
 \end{frame}
 
-% Q2 — FORMAL DIRECTED ALT PROOF & FINITE-CAP UNREACHABLE HANDLING
-\begin{frame}{DIRECTED ALT PROOF \& FINITE-CAP HANDLING}
+% Q2 — DIRECTED ALT & FINITE-CAP PROOF
+\begin{frame}{DIRECTED ALT \& FINITE-CAP PROOF}
 \navslidetag[NavViolet]{Q\&A BACKUP $\cdot$ Q2}
 \framesubtitle{Why directed triangle inequality + finite caps $M_F, M_R$ guarantee admissibility and consistency}
 \vspace{0.08cm}
@@ -689,7 +755,7 @@
         $\implies [d(\ell,t)-d(\ell,u)] - [d(\ell,t)-d(\ell,v)] \le c(u,v)$\\[3pt]
         \textbf{Reverse:} $d(u,\ell) \le c(u,v) + d(v,\ell)$\\
         $\implies [d(u,\ell)-d(t,\ell)] - [d(v,\ell)-d(t,\ell)] \le c(u,v)$\\[3pt]
-        Max over $\ell \in L$ and $0$ preserves consistency.%
+        \textbf{Separate ALT:} $h_{\mathrm{free}} + h_{\mathrm{delay}} \le C_{\mathrm{free}}(P) + C_{\mathrm{delay}}(P) = C_S(P)$.%
       }%
     }
   \end{column}
@@ -698,8 +764,7 @@
       {\ttfamily\fontsize{7.2}{8.5}\selectfont\bfseries\color{NavCyan}FINITE CAPS $M_F, M_R$ FOR UNREACHABLE}\\[4pt]
       {\fontsize{8.0}{11.2}\selectfont\color{NavIvory}%
         On directed road graphs, some nodes cannot reach or be reached from $\ell$. Using $\infty$ causes undefined $\infty - \infty$.\\[3pt]
-        $\bullet$ Replace $\infty$ with finite caps $M_F, M_R$ (e.g., $\max$ finite distance $+ 1$ or graph upper bound)\\
-        $\bullet$ Skip landmark terms where target $t$ is unreachable ($d(\ell,t)=\infty$ or $d(t,\ell)=\infty$)\\
+        $\bullet$ Uniformly replace missing forward/reverse distances with finite caps $M_F, M_R$ (no skipping), preserving directed potential inequalities without $\infty - \infty$\\[3pt]
         $\bullet$ Guarantees finite, consistent $h_{\mathrm{ALT}} \le h^*$.%
       }%
     }
@@ -707,8 +772,8 @@
 \end{columns}
 \end{frame}
 
-% Q3 — TIME-DEPENDENT FIFO ROUTING & SNAPSHOT GUARDS
-\begin{frame}{TIME-DEPENDENT FIFO ROUTING \& GUARDS}
+% Q3 — TIME-DEPENDENT FIFO & GUARDS
+\begin{frame}{TIME-DEPENDENT FIFO \& GUARDS}
 \navslidetag[NavTeal]{Q\&A BACKUP $\cdot$ Q3}
 \framesubtitle{Dynamic departure-time routing in src/time\_routing.py with strict snapshot-compatibility guards}
 \vspace{0.10cm}
@@ -736,8 +801,8 @@
 \end{columns}
 \end{frame}
 
-% Q4 — FULL-GRAPH PER-PAIR BREAKDOWN & 144-NODE GRID BENCHMARK
-\begin{frame}{FULL-GRAPH PAIRS \& 144-NODE GRID BENCHMARK}
+% Q4 — FULL PAIRS & 144-NODE GRID
+\begin{frame}{FULL PAIRS \& 144-NODE GRID}
 \navslidetag[NavCyan]{Q\&A BACKUP $\cdot$ Q4}
 \framesubtitle{Scope A per-pair highlights (evaluation-summary.json) alongside Scope B 144-node bottleneck grid}
 \vspace{0.05cm}
@@ -769,14 +834,14 @@
       \setlength{\tabcolsep}{3pt}%
       \renewcommand{\arraystretch}{1.08}%
       \fontsize{7.0}{8.4}\selectfont
-      \begin{tabular}{@{}>{\bfseries\color{NavIvory}}p{1.65cm}cccc@{}}
+      \begin{tabular}{@{}>{\bfseries\color{NavIvory}}lcccc@{}}
         \toprule
         \textbf{\color{NavMuted}Method} & \textbf{\color{NavMuted}Exp.} & \textbf{\color{NavMuted}Tight.} & \textbf{\color{NavMuted}Query} & \textbf{\color{NavMuted}Prep/Cache} \\
         \midrule
-        Zero & 75.85 & 0.0000 & -- & -- \\
+        Zero & 75.85 & 0.0000 & 0.470\,ms & -- \\
         Safe & 45.80 & 0.4366 & 0.424\,ms & -- \\
         Edge-Local & 38.80 & 0.5342 & 0.894\,ms & -- \\
-        Sep. ALT & 19.15 & 0.8710 & -- & 15.5\,ms / 50.9\,KB \\
+        Sep. ALT & 19.15 & 0.8710 & 0.354\,ms & 15.5\,ms / 50.9\,KB \\
         Joint ALT & \color{NavViolet}\textbf{13.70} & \color{NavViolet}\textbf{0.9541} & \color{NavTeal}\textbf{0.195\,ms} & 23.9\,ms / 25.6\,KB \\
         \bottomrule
       \end{tabular}\\[4pt]
@@ -786,8 +851,8 @@
 \end{columns}
 \end{frame}
 
-% Q5 — CUSTOM A* + ALT VS OSRM/CH & AUDIT REPRODUCIBILITY
-\begin{frame}{CUSTOM A* + ALT VS OSRM/CH \& REPRODUCIBILITY}
+% Q5 — A* + ALT VS CH & REPRODUCIBILITY
+\begin{frame}{A* + ALT VS CH \& REPRODUCIBILITY}
 \navslidetag[NavTeal]{Q\&A BACKUP $\cdot$ Q5}
 \framesubtitle{Design positioning against Contraction Hierarchies and deterministic verification controls}
 \vspace{0.10cm}
@@ -815,7 +880,7 @@
 \end{frame}
 
 % Q6 — GROUP 7 TEAM & REFERENCES (Vietnamese Unicode in Inter!)
-\begin{frame}{GROUP 7 $\cdot$ CC01 — TEAM \& REFERENCES}
+\begin{frame}{GROUP 7 TEAM \& REFERENCES}
 \navslidetag[NavCyan]{Q\&A BACKUP $\cdot$ Q6}
 \framesubtitle{CO3061 Introduction to Artificial Intelligence $\cdot$ Advisor: Dr. Nguyễn Quốc Minh}
 \vspace{0.04cm}
@@ -825,7 +890,7 @@
       \setlength{\tabcolsep}{4pt}%
       \renewcommand{\arraystretch}{1.04}%
       \fontsize{7.0}{8.4}\selectfont
-      \begin{tabular}{@{}>{\color{NavIvory}}p{2.45cm}>{\ttfamily\color{NavCyan}}p{1.05cm}>{\color{NavMuted}}p{4.20cm}@{}}
+      \begin{tabular}{@{}>{\color{NavIvory}}l>{\ttfamily\color{NavCyan}}l>{\color{NavMuted}}l@{}}
         \toprule
         \textbf{\color{NavAmber}Member} & \textbf{\color{NavAmber}ID} & \textbf{\color{NavAmber}Primary Responsibility} \\
         \midrule

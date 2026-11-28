@@ -24,7 +24,7 @@
 
 Good morning. We are Group Seven from CC01. Our first project builds a traffic-aware A-star and ALT router for Ho Chi Minh City. We focus on modeling travel time from historical traffic data, formally verifying optimality, and tightening heuristic bounds.
 
-## Slide 2 — Urban Routing as Directed Graph Search
+## Slide 2 — Urban Routing as Graph Search
 
 **Target: 0:20–1:00**
 
@@ -36,7 +36,7 @@ Because of one-way streets and parallel road segments between the same intersect
 
 [Point to the parallel edges `k=0` and `k=1` on the MultiDiGraph diagram.]
 
-## Slide 3 — System Architecture & Traffic Pipeline
+## Slide 3 — System & Traffic Pipeline
 
 **Target: 1:00–1:45**
 
@@ -48,7 +48,7 @@ On top of this snapshot, we implement five independent heuristics alongside a ti
 
 [Point to the 5-tier fallback pipeline and the 44-test NetworkX audit block.]
 
-## Slide 4 — Custom A* & Safe Heuristic Verification
+## Slide 4 — Custom A* & Safe Proof
 
 **Target: 1:45–2:40**
 
@@ -60,9 +60,9 @@ To guarantee optimal routes, our Safe heuristic divides great-circle distance by
 
 Because map lengths and floating-point rounding can still create subtle mismatches, both our CLI and server verify an edge-level bound on every traversable edge when loading the graph. Across all one hundred and three thousand eight hundred and ten edges, we found zero violations, with a minimum margin of zero point zero six four eight nine two seconds—formally proving admissibility and consistency.
 
-[Point to the `0 / 103,810` edge-check card and the `0.064892 s` minimum margin.]
+[Point to the 0 / 103,810 card and triangle diagram.]
 
-## Slide 5 — Fixing Local Traffic: Edge-Based Lookahead
+## Slide 5 — Edge-Based Local Traffic
 
 **Target: 2:40–3:40**
 
@@ -72,9 +72,9 @@ We originally tested a legacy Traffic heuristic with beta equal to zero point tw
 
 To fix this, our Edge-Local heuristic replaces multiplicative scaling with an exact one-step outgoing-edge lookahead: taking the minimum of actual edge cost plus Safe at the neighbor. Because it evaluates real snapshot edges directly, it restores admissibility and consistency while strictly dominating Safe.
 
-[Trace the `11.24 s > 10.00 s` counterexample, then point to the `h_edge` lookahead formula.]
+[Point to the red u -> t counterexample, then the green 3-branch lookahead choosing 110 s.]
 
-## Slide 6 — Landmark Acceleration: Joint & Separate ALT
+## Slide 6 — Joint & Separate ALT
 
 **Target: 3:40–4:45**
 
@@ -82,13 +82,13 @@ To fix this, our Edge-Local heuristic replaces multiplicative scaling with an ex
 
 Even with one-step lookahead, a global V-upper weakens the Safe bound on long corridors. To tighten heuristic estimates, we decompose each edge cost into free-flow travel time plus traffic delay, and apply A-star, Landmarks, and Triangle Inequality—known as ALT.
 
-We compare Joint ALT, which applies the triangle inequality to total snapshot cost, against Separate ALT, which bounds free-flow time and traffic delay independently. On directed one-way streets, unreachable landmarks could cause infinity-minus-infinity errors, so we clamp bounds using finite forward and reverse caps, M-F and M-R.
+We compare Joint ALT, which applies the triangle inequality directly to total snapshot cost—independent of Safe and never combined with it—against Separate ALT, which bounds free-flow time and traffic delay independently. On directed one-way streets, unreachable landmarks could cause infinity-minus-infinity errors, so we clamp bounds using finite forward and reverse caps, M-F and M-R.
 
 Users can select Tan Son Nhat Airport as the default single landmark, pick one to thirty-two custom landmarks, or use four, eight, sixteen, or thirty-two auto-selected landmarks, all stored in a SHA-256 LRU cache for instant reuse.
 
-[Point to the `c_free + c_delay` split, the `M_F, M_R` caps, and the Tan Son Nhat landmark selector.]
+[Point to the c_free + c_delay bar and the center landmark triangle.]
 
-## Slide 7 — Full HCMC Graph: Safe Cuts Expansions by 46.1%
+## Slide 7 — Full HCMC Graph: -46.1% Nodes
 
 **Target: 4:45–5:35**
 
@@ -98,9 +98,9 @@ On the archived forty-four point two thousand node full HCMC graph, we evaluated
 
 Safe A-star expanded forty-six point one percent fewer nodes than Zero—one hundred and three thousand five hundred and ten versus one hundred and ninety-two thousand and ninety-nine—with zero admissibility or consistency violations. Meanwhile, Legacy Traffic expanded one hundred and four thousand eight hundred and forty-six nodes overall, one point three percent worse than Safe, driven by cross-city outliers like POI one hundred eighteen to one hundred thirty-eight, which added two thousand three hundred and forty-five extra nodes.
 
-[Point to the `103,510` vs `192,099` bar chart and the `POI 118 -> 138` outlier.]
+[Point to the 46.1% hero, the Safe bar, and the POI 118 -> 138 mini-bar.]
 
-## Slide 8 — 5-Method Benchmark: Expansions & Tightness
+## Slide 8 — 5-Method Benchmark Results
 
 **Target: 5:35–6:30**
 
@@ -112,9 +112,9 @@ Mean node expansions drop steadily from seventy-six point seven five for Zero, t
 
 Joint ALT reaches a heuristic tightness of zero point nine five seven, with zero admissibility or consistency violations and twenty out of twenty NetworkX Dijkstra optimality matches across all evaluated pairs.
 
-[Point to the 5-method expansion bars and the `0.957` tightness / `20/20` Dijkstra row.]
+[Trace the paired chart: nodes drop left from 76.75 to 14.80 as tightness climbs right to 0.957.]
 
-## Slide 9 — Computational Trade-Offs: Query vs Overhead
+## Slide 9 — Query vs Overhead Trade-Offs
 
 **Target: 6:30–7:20**
 
@@ -124,9 +124,9 @@ Fewer node expansions do not always translate to faster wall-clock queries. Edge
 
 Comparing ALT variants, Joint beats Separate on ninety-five point zero percent of places pairs and sixty-three point three percent of grid pairs, while Separate still wins on two point seven percent and eight point nine percent. Joint also preprocesses faster and uses half the memory: seventeen point five milliseconds and twenty-six point six kilobytes versus twenty-seven point eight milliseconds and fifty-three kilobytes.
 
-[Point to the Edge-Local runtime spike and the Joint vs Separate comparison table.]
+[Point to Edge-Local's 1.30 ms orange heuristic bar, then the 95.0% vs 63.3% Joint dominance bars.]
 
-## Slide 10 — Interactive Map UI & Route Case Study
+## Slide 10 — Interactive UI & Case Study
 
 **Target: 7:20–8:00**
 
@@ -136,9 +136,9 @@ Here is a recorded UI case study from POI one hundred thirty-two, Bách Hóa Xan
 
 We upgraded the React and MapLibre interface to support all five heuristics, one to thirty-two custom landmarks, and a standalone demo mode, while noting that displayed runtimes are single UI observations on frozen historical data.
 
-[Point to pin A, pin B, the 176-edge route, and the 5-method and landmark controls.]
+[Point to the archived POI 132 -> 121 KPI card and upgraded 5-method MapLibre UI card.]
 
-## Slide 11 — Limitations and Future Works
+## Slide 11 — Limitations & Future Works
 
 **Target: 8:00–8:45**
 
@@ -184,7 +184,7 @@ Edge-Local reduces expansions by `6.6%` on places and `15.3%` on the grid, but e
 Joint ALT applies the triangle inequality directly to total cost `c_S = c_free + c_delay`, which gives tighter bounds on `95.0%` of places pairs and `63.3%` of grid pairs with half the preprocessing memory. However, when free-flow and delay bottlenecks occur along different landmark directions, summing independent `c_free` and `c_delay` bounds in Separate ALT can occasionally be tighter (`2.7%` places, `8.9%` grid). (**Backup:** Slide 6, Slide 9)
 
 ### 6. How does ALT handle one-way streets and unreachable landmarks without `inf - inf`?
-In directed graphs, some nodes cannot reach or be reached from a landmark, producing infinite shortest-path distances. Instead of subtracting `inf - inf`, we clamp unreachable landmark distances using finite forward and reverse caps (`M_F, M_R`), preserving valid, finite, and admissible lower bounds. (**Backup:** Q2)
+In directed graphs, some nodes cannot reach or be reached from a landmark, producing infinite shortest-path distances. Instead of subtracting `inf - inf` or skipping individual terms, missing forward and reverse distances are uniformly replaced by finite caps (`M_F` and `M_R`, the maximum finite table values), preserving valid directed potential inequalities and admissible lower bounds. (**Backup:** Q2)
 
 ### 7. How are landmarks selected and cached?
 By default, our UI and single-landmark mode anchor at Tan Son Nhat Airport, while users can pick 1–32 custom landmarks or auto-select 4, 8, 16, or 32 landmarks (farthest-first). Landmark distance tables are stored in a SHA-256 keyed LRU cache so repeated queries on the same graph snapshot avoid recomputation. (**Backup:** Slide 6, Q5)

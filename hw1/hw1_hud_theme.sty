@@ -177,27 +177,27 @@
 % 6. Frametitle Template
 % ----------------------------------------------------------------------
 \setbeamertemplate{frametitle}{%
-  \vspace*{0.62cm}%
+  \vspace*{0.54cm}%
   \noindent\begin{minipage}[t]{\textwidth}%
     \ifx\nav@slidetag\@empty
-      {\raggedright\navdisplay\fontsize{15.2}{18}\selectfont\color{NavIvory}\insertframetitle\par}%
+      {\raggedright\navdisplay\fontsize{13.8}{16.2}\selectfont\color{NavIvory}\insertframetitle\par}%
     \else
-      \begin{minipage}[t]{0.72\textwidth}%
-        {\raggedright\navdisplay\fontsize{15.2}{18}\selectfont\color{NavIvory}\insertframetitle\par}%
+      \begin{minipage}[t]{0.76\textwidth}%
+        {\raggedright\navdisplay\fontsize{13.4}{15.8}\selectfont\color{NavIvory}\insertframetitle\par}%
       \end{minipage}%
       \hfill%
-      \begin{minipage}[t]{0.27\textwidth}%
+      \begin{minipage}[t]{0.23\textwidth}%
         \raggedleft
         \raisebox{-0.55ex}{\navtag[\nav@tagcolor]{\nav@slidetag}}%
       \end{minipage}%
     \fi
     \ifx\insertframesubtitle\@empty\else
       \par\vspace{1.5pt}%
-      {\raggedright\fontsize{8.2}{10}\selectfont\color{NavMuted}\insertframesubtitle\par}%
+      {\raggedright\fontsize{7.9}{9.5}\selectfont\color{NavMuted}\insertframesubtitle\par}%
     \fi
   \end{minipage}%
   \gdef\nav@slidetag{}%
-  \vspace*{-0.14cm}%
+  \vspace*{-0.16cm}%
 }
 
 % ----------------------------------------------------------------------
@@ -290,19 +290,62 @@
   \end{tikzpicture}%
 }
 
-% Slide 10 paired limitation -> future work card row
+% Compact KPI tile with colored left bar: [color]{width}{value}{label}
+\newcommand{\navkpi}[4][NavCyan]{%
+  \begin{tikzpicture}
+    \node[fill=NavPanel, draw=NavBorder!28, line width=0.6pt, rounded corners=4pt,
+          inner xsep=7pt, inner ysep=4.5pt, text width=#2, align=left] (k) {%
+      {\ttfamily\fontsize{10.5}{12}\selectfont\bfseries\color{#1}#3}\\[1pt]
+      {\fontsize{6.7}{8.2}\selectfont\color{NavMuted}#4}%
+    };
+    \draw[#1, line width=2pt, line cap=round] ($(k.north west)+(0.03,-0.10)$) -- ($(k.south west)+(0.03,0.10)$);
+  \end{tikzpicture}%
+}
+
+% 2-segment horizontal stacked bar: {label}{labelW_cm}{barW_cm}{frac1}{frac2}{col1}{col2}{valText}
+\newcommand{\navstacktwo}[8]{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \node[anchor=west, inner sep=0pt, text width=#2cm, align=left,
+          font=\fontsize{8.0}{9.2}\selectfont\bfseries, text=NavIvory] at (0,0) {#1};
+    \pgfmathsetmacro{\bx}{#2 + 0.12}
+    \pgfmathsetmacro{\wone}{max(0.06, #3 * #4)}
+    \pgfmathsetmacro{\wtwo}{max(0.04, #3 * #5)}
+    \fill[NavTrack, rounded corners=2.2pt] (\bx,-0.11) rectangle (\bx+#3,0.11);
+    \fill[#6, rounded corners=2pt] (\bx,-0.11) rectangle (\bx+\wone,0.11);
+    \fill[#7, rounded corners=1.5pt] (\bx+\wone,-0.11) rectangle (\bx+\wone+\wtwo,0.11);
+    \node[anchor=west, inner sep=0pt, font=\ttfamily\fontsize{7.6}{8.8}\selectfont\bfseries, text=NavIvory]
+      at (\bx+#3+0.15, 0) {#8};
+  \end{tikzpicture}%
+}
+
+% 100% 3-segment horizontal stacked bar: {label}{barW_cm}{f1}{f2}{f3}{c1}{c2}{c3}{lbl1}
+\newcommand{\navstackthree}[9]{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \node[anchor=west, inner sep=0pt, font=\fontsize{7.8}{9.0}\selectfont\bfseries, text=NavIvory] at (0,0.30) {#1};
+    \pgfmathsetmacro{\wone}{#2 * #3}
+    \pgfmathsetmacro{\wtwo}{#2 * #4}
+    \pgfmathsetmacro{\wthree}{#2 * #5}
+    \fill[#6, rounded corners=2pt] (0,-0.12) rectangle (\wone,0.12);
+    \fill[#7] (\wone,-0.12) rectangle (\wone+\wtwo,0.12);
+    \fill[#8, rounded corners=2pt] (\wone+\wtwo,-0.12) rectangle (#2,0.12);
+    \node[anchor=center, inner sep=0pt, font=\ttfamily\fontsize{7.0}{8.0}\selectfont\bfseries, text=white]
+      at (\wone/2, 0) {#9};
+  \end{tikzpicture}%
+}
+
+% Slide 11 paired limitation -> future work card row
 \newcommand{\navlimpair}[3]{% {y}{lim}{future}
-  \node[fill=NavPanel, draw=NavBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
-        text width=6.05cm, minimum height=0.80cm, anchor=west, text=NavIvory] (L) at (0,#1) {%
-    {\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries\color{NavAmber}LIMITATION}\\[1pt]
-    {\fontsize{8.1}{10}\selectfont\color{NavIvory}#2}%
+  \node[fill=NavPanel, draw=NavBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4pt,
+        text width=6.10cm, minimum height=0.72cm, anchor=west, text=NavIvory] (L) at (0,#1) {%
+    {\ttfamily\fontsize{6.0}{7.0}\selectfont\bfseries\color{NavAmber}LIMITATION}\\[1pt]
+    {\fontsize{7.8}{9.4}\selectfont\color{NavIvory}#2}%
   };
-  \draw[NavAmber, line width=2pt, line cap=round] ($(L.north west)+(0.03,-0.12)$) -- ($(L.south west)+(0.03,0.12)$);
+  \draw[NavAmber, line width=2pt, line cap=round] ($(L.north west)+(0.03,-0.10)$) -- ($(L.south west)+(0.03,0.10)$);
   \draw[NavTeal, line width=1pt, -{Stealth[length=2mm]}] (6.68,#1) -- (7.48,#1);
-  \node[fill=NavPanel, draw=NavBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4.5pt,
-        text width=6.15cm, minimum height=0.80cm, anchor=west, text=NavIvory] (R) at (7.58,#1) {%
-    {\ttfamily\fontsize{6.2}{7.2}\selectfont\bfseries\color{NavTeal}FUTURE WORK}\\[1pt]
-    {\fontsize{8.1}{10}\selectfont\color{NavIvory}#3}%
+  \node[fill=NavPanel, draw=NavBorder!35, rounded corners=4pt, inner xsep=8pt, inner ysep=4pt,
+        text width=6.15cm, minimum height=0.72cm, anchor=west, text=NavIvory] (R) at (7.58,#1) {%
+    {\ttfamily\fontsize{6.0}{7.0}\selectfont\bfseries\color{NavTeal}FUTURE WORK}\\[1pt]
+    {\fontsize{7.8}{9.4}\selectfont\color{NavIvory}#3}%
   };
-  \draw[NavTeal, line width=2pt, line cap=round] ($(R.north west)+(0.03,-0.12)$) -- ($(R.south west)+(0.03,0.12)$);
+  \draw[NavTeal, line width=2pt, line cap=round] ($(R.north west)+(0.03,-0.10)$) -- ($(R.south west)+(0.03,0.10)$);
 }
